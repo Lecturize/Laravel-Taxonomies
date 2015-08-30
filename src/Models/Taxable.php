@@ -10,7 +10,7 @@ class Taxable extends Model
 	 *
 	 * @var string
 	 */
-	protected $table = 'terms_relations';
+	protected $table = 'taxable';
 
 	/**
 	 * The attributes that are mass assignable.

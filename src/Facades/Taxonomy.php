@@ -3,7 +3,7 @@
 use vendocrat\Taxonomies\Taxonomies as TaxonomiesAccessor;
 use Illuminate\Support\Facades\Facade;
 
-class Taxonomies extends Facade
+class Taxonomy extends Facade
 {
 	/**
 	 * Get the registered name of the component.

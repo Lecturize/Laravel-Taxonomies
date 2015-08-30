@@ -47,7 +47,8 @@ class TaxonomiesTable extends Migration
             $table->integer('term_id')->unsigned()->index();
             $table->foreign('term_id')
                 ->references('id')
-                ->on('terms');
+                ->on($this->table_terms)
+                ->onDelete('cascade');
 
             $table->string('taxonomy');
             $table->string('desc');
@@ -60,14 +61,15 @@ class TaxonomiesTable extends Migration
             $table->softDeletes();
         });
 
-        Schema::create('terms_relations', function(Blueprint $table)
+        Schema::create($this->table_pivot, function(Blueprint $table)
         {
             $table->increments('id');
 
             $table->integer('taxonomy_id')->unsigned()->index();
             $table->foreign('taxonomy_id')
                 ->references('id')
-                ->on('terms_taxonomies');
+                ->on($this->table_taxonomies)
+                ->onDelete('cascade');
 
             $table->integer('taxable_id')->unsigned()->index();
             $table->string('taxable_type');

@@ -12,7 +12,7 @@ class Taxonomy extends Model
 	 *
 	 * @var string
 	 */
-	protected $table = 'terms_taxonomies';
+	protected $table = 'taxonomies';
 
 	/**
 	 * The attributes that are mass assignable.
