@@ -56,7 +56,7 @@ class Taxonomy extends Model
 	/*
 	public function posts()
 	{
-		return $this->morphedByMany('App\vendocrat\Models\Posts\Post', 'taxable', 'terms_relations');
+		return $this->morphedByMany('App\vendocrat\Models\Posts\Post', 'taxable', 'taxable');
 	}
 	*/
 

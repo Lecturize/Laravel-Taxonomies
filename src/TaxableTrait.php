@@ -15,7 +15,7 @@ trait TaxableTrait
 	 */
 	public function taxonomies()
 	{
-		return $this->morphToMany('vendocrat\Taxonomies\Models\Taxonomy', 'taxable', 'terms_relations');
+		return $this->morphToMany('vendocrat\Taxonomies\Models\Taxonomy', 'taxable', 'taxable');
 	}
 
 	/**
