@@ -6,6 +6,8 @@
 
 Simple, nestable Terms & Taxonomies for Laravel 5.
 
+**Attention:** This package is a work in progress, please use with care and be sure to report any issues!
+
 ## Installation
 
 Require the package from your `composer.json` file
@@ -31,19 +33,17 @@ Next register the service provider and (optional) facade to your `config/app.php
 ```php
 'providers' => [
 	// Illuminate Facades ...
-    'Setting' => vendocrat\Taxonomies\Facades\Taxonomies::class
+    'Taxonomy'    => vendocrat\Taxonomies\Facades\Taxonomy::class
 ];
 ```
 
 ## Configuration & Migration
 
-Laravel Taxonomies includes an optional config file. Get started buy publishing it:
-
 ```bash
 $ php artisan vendor:publish --provider="vendocrat\Taxonomies\TaxonomiesServiceProvider"
 ```
 
-This will create a `config/sample.php` file and a migration file. Afterwards you'll have to run the artisan migrate command:
+This will create a `config/taxonomies.php` and a migration file. In the config file you can customize the table names, finally you'll have to run migration like so:
 
 ```bash
 $ php artisan migrate
@@ -51,15 +51,11 @@ $ php artisan migrate
 
 ## Usage
 
-
+Coming soon!
 
 ## Example
 
-
-
-## To-Dos
-
-
+Coming soon!
 
 ## License
 
