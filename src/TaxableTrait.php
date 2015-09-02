@@ -7,6 +7,7 @@ trait TaxableTrait
 {
 	/**
 	 * Return collection of taxonomies related to the taxed model
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
 	 */
 	public function taxed()
 	{
@@ -14,7 +15,7 @@ trait TaxableTrait
 	}
 
 	/**
-	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
 	 */
 	public function taxonomies()
 	{
