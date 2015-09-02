@@ -1,4 +1,4 @@
-<?php namespace vendocrat\Taxonomies\Models;
+<?php namespace vendocrat\Taxonomies;
 
 trait TaxableTrait
 {
