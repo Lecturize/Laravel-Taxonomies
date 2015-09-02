@@ -1,5 +1,8 @@
 <?php namespace vendocrat\Taxonomies;
 
+use vendocrat\Taxonomies\Models\Taxonomy;
+use vendocrat\Taxonomies\Models\Term;
+
 trait TaxableTrait
 {
 	/**
