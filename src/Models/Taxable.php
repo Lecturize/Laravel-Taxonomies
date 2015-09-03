@@ -10,7 +10,7 @@ class Taxable extends Model
 	 *
 	 * @var string
 	 */
-	protected $table = 'taxable';
+	protected $table = 'taxables';
 
 	/**
 	 * The attributes that are mass assignable.
