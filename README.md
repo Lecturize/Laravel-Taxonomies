@@ -4,7 +4,7 @@
 
 # Laravel Taxonomies
 
-Simple, nestable Terms & Taxonomies for Laravel 5.
+Simple, nestable Terms & Taxonomies (similar to WordPress) for Laravel 5.
 
 **Attention:** This package is a work in progress, please use with care and be sure to report any issues!
 
