@@ -51,11 +51,84 @@ $ php artisan migrate
 
 ## Usage
 
-Coming soon!
+##### Add a Term
+```php
+$model->addTerm( 'My Category', 'taxonomy' )
+```
+
+##### Add multiple Terms
+```php
+$model->addTerm( ['Add','Multiple','Categories'], 'taxonomy' )
+```
+
+##### Add a Term with optional parent (taxonomy) & order
+```php
+$model->addTerm( 'My Category', 'taxonomy', 1, 2 )
+```
+
+##### Get all Terms for a model by taxonomy
+```php
+$model->getTerms( 'taxonomy' )
+```
+
+##### Get a specific Term for a model by (optional) taxonomy
+```php
+$model->getTerm( 'My Category', 'taxonomy' )
+```
+
+##### Convenience method for getTerm()
+```php
+$model->hasTerm( $term, 'taxonomy' )
+```
+
+##### Remove a Term from model by (optional) taxonomy
+```php
+$model->removeTerm( $term, 'taxonomy' )
+```
+
+##### Remove all Terms from model
+```php
+$model->removeAllTerms()
+```
+
+##### Scope models with multiple Terms
+```php
+$model = Model::withTerms( $terms, 'taxonomy' )->get();
+```
+
+##### Scope models with one Term
+```php
+$model = Model::withTerm( $term, 'taxonomy' )->get();
+```
 
 ## Example
 
-Coming soon!
+**Add categories to an Eloquent model**
+
+```php
+$post = Post::find(1);
+
+$post->addTerm( 'My First Category', 'category' );
+$post->addTerm( ['Category Two', 'Category Three'], 'category' );
+```
+
+First fo all, this snippet will create three entries in your `terms` table, if they don't already exist:
+
+* My First Category
+* Category Two
+* Category Three
+
+Then it will create three entries in your `taxonomies` table, relating the terms with the given taxonomy "category".
+
+And last it will relate the entries from your `taxonomies` table with your model (in this example a "Post" model) in your `pivot` table.
+
+**Why three tables?**
+
+Imagine you have a Taxonomy called *post_cat* and another one *product_cat*, the first categorises your blog posts, the second the products in your online shop. Now you add a product to a category (a *term*) called *Shoes* using `$product->addTerm( 'Sheos', 'product_cat' );`. Afterwards you want to blog about that product and add that post to a *post_cat* called *Shoes* as well, using `$product->addTerm( 'Sheos', 'post_cat' );`.
+
+Normally you would have two entries now in your database, one like `['Sheos','product_cat']` and another `['Sheos','post_at']`. Oops, now you recognize you misspelled *Shoes*, now you would have to change it twice, for each Taxonomy.
+
+So I wanted to keep my *Terms* unique throughout my app, which is why I separated them from the Taxonomies and simply related them.
 
 ## License
 
