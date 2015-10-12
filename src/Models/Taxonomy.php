@@ -53,12 +53,10 @@ class Taxonomy extends Model
 	 *
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
 	 */
-	/*
 	public function posts()
 	{
-		return $this->morphedByMany('App\vendocrat\Models\Posts\Post', 'taxable', 'taxable');
+		return $this->morphedByMany('App\vendocrat\Models\Posts\Post', 'taxable', 'taxables');
 	}
-	*/
 
 	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -83,7 +81,7 @@ class Taxonomy extends Model
 	 */
 	public function scopeTaxonomy( $query, $taxonomy )
 	{
-		return $query->where( 'taxonomy', '=', $taxonomy );
+		return $query->where( 'taxonomy', $taxonomy );
 	}
 
 	/**
@@ -95,7 +93,7 @@ class Taxonomy extends Model
 	public function scopeTerm( $query, $term, $taxonomy = 'major' )
 	{
 		return $query->whereHas('term', function($q) use($term, $taxonomy) {
-			$q->where( 'name', '=', $term );
+			$q->where('name', $term);
 		});
 	}
 
@@ -108,7 +106,7 @@ class Taxonomy extends Model
 	public function scopeSearch( $query, $searchTerm, $taxonomy = 'major' )
 	{
 		return $query->whereHas('term', function($q) use($searchTerm, $taxonomy) {
-			$q->where( 'name', 'like', '%'. $searchTerm .'%' );
+			$q->where('name', 'like', '%'. $searchTerm .'%');
 		});
 	}
 

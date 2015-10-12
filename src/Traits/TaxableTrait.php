@@ -1,8 +1,14 @@
-<?php namespace vendocrat\Taxonomies;
+<?php namespace vendocrat\Taxonomies\Traits;
 
+use vendocrat\Taxonomies\Models\Taxable;
 use vendocrat\Taxonomies\Models\Taxonomy;
 use vendocrat\Taxonomies\Models\Term;
+use vendocrat\Taxonomies\TaxableUtils;
 
+/**
+ * Class TaxableTrait
+ * @package vendocrat\Taxonomies
+ */
 trait TaxableTrait
 {
 	/**
@@ -11,7 +17,7 @@ trait TaxableTrait
 	 */
 	public function taxed()
 	{
-		return $this->morphMany('vendocrat\Taxonomies\Models\Taxable', 'taxable');
+		return $this->morphMany(Taxable::class, 'taxable');
 	}
 
 	/**
@@ -19,7 +25,7 @@ trait TaxableTrait
 	 */
 	public function taxonomies()
 	{
-		return $this->morphToMany('vendocrat\Taxonomies\Models\Taxonomy', 'taxable');
+		return $this->morphToMany(Taxonomy::class, 'taxable');
 	}
 
 	/**
@@ -52,16 +58,6 @@ trait TaxableTrait
 		$this->taxonomies()->detach();
 	}
 
-
-
-
-
-
-
-
-
-
-
 	/**
 	 * @param $taxonomy_id
 	 */
@@ -69,23 +65,6 @@ trait TaxableTrait
 	{
 		$this->taxonomies()->attach($taxonomy_id);
 	}
-
-	/*
-	public function setCategory( $term_id, $taxonomy = 'category' )
-	{
-		$taxable = Taxonomy::firstOrCreate([
-				'taxonomy' => $taxonomy,
-				'term_id'  => $term_id
-			]);
-
-		$this->taxonomies()->attach($taxable->id);
-	}
-	*/
-
-
-
-
-
 
 	/**
 	 * @param $terms
@@ -219,6 +198,12 @@ trait TaxableTrait
 		});
 	}
 
+	/**
+	 * @param $query
+	 * @param $term
+	 * @param $taxonomy
+	 * @return mixed
+	 */
 	public function scopeWithTerm( $query, $term, $taxonomy ) {
 		$term_ids = Taxonomy::where( 'taxonomy', $taxonomy )->lists('term_id');
 
@@ -231,6 +216,11 @@ trait TaxableTrait
 		});
 	}
 
+	/**
+	 * @param $query
+	 * @param $taxonomy_id
+	 * @return mixed
+	 */
 	public function scopeHasCategory( $query, $taxonomy_id ) {
 		return $query->whereHas('taxed', function($q) use($taxonomy_id) {
 			$q->where('taxonomy_id', $taxonomy_id);
