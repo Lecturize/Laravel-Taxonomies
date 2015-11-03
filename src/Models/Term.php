@@ -13,46 +13,24 @@ class Term extends Model implements
 	use SoftDeletes;
 
 	/**
-	 * The database table used by the model.
-	 *
-	 * @var string
+	 * @inheritdoc
 	 */
 	protected $table = 'terms';
 
 	/**
-	 * The attributes that are mass assignable.
-	 *
-	 * @var array
+	 * @inheritdoc
 	 */
 	protected $fillable = [
-		'name',
+		'name_de',
+		'name_en',
+		'name_it',
 		'slug',
-		'order',
 	];
 
 	/**
-	 * The attributes excluded from the model's JSON form.
-	 *
-	 * @var array
-	 */
-	protected $hidden = [];
-
-	/**
-	 * The attributes that should be mutated to dates.
-	 *
-	 * @var array
+	 * @inheritdoc
 	 */
 	protected $dates = ['deleted_at'];
-
-	/**
-	 * The validation rules for this model.
-	 *
-	 * @var array
-	 */
-	protected $validationRules = [
-		'name' => 'required',
-		'slug' => 'required',
-	];
 
 	/**
 	 * Sluggable
@@ -64,12 +42,64 @@ class Term extends Model implements
 		'save_to'    => 'slug',
 	];
 
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+	 */
 	public function taxable() {
-		return $this->morphMany('vendocrat\Taxonomies\Models\Taxable', 'taxable');
+		return $this->morphMany(Taxable::class, 'taxable');
 	}
 
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
 	public function taxonomies() {
-		return $this->hasMany('vendocrat\Taxonomies\Models\Taxonomy');
+		return $this->hasMany(Taxonomy::class);
 	}
+
+	/**
+	 * Get Name Attribute for slugging
+	 *
+	 * @return mixed
+	 */
+	public function getNameAttribute() {
+		if ( $this->name_en ) {
+			return $this->name_en;
+		} elseif ( $this->name_de ) {
+			return $this->name_de;
+		} elseif ( $this->name_it ) {
+			return $this->name_it;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get Display Name
+	 *
+	 * @param  string $locale
+	 * @param  int    $limit
+	 * @return mixed
+	 */
+	public function getDisplayName( $locale = '', $limit = 0 ) {
+		$locale = $locale ?: app()->getLocale();
+
+		switch ( $locale ) {
+			case 'en' :
+			default :
+				$name = $this->name_en;
+				break;
+
+			case 'de' :
+				$name = $this->name_de;
+				break;
+
+			case 'it' :
+				$name = $this->name_it;
+				break;
+		}
+
+		return $limit > 0 ? str_limit($name, $limit) : $name;
+	}
+
 
 }

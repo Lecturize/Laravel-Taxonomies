@@ -33,7 +33,9 @@ class TaxonomiesTable extends Migration
         {
             $table->increments('id');
 
-            $table->string('name')->unique();
+            $table->string('name_de')->nullable()->unique();
+            $table->string('name_en')->nullable()->unique();
+            $table->string('name_it')->nullable()->unique();
             $table->string('slug');
 
             $table->timestamps();
@@ -55,7 +57,7 @@ class TaxonomiesTable extends Migration
 
             $table->integer('parent')->unsigned()->default(0);
 
-            $table->smallInteger('order')->unsigned()->default(0);
+            $table->smallInteger('sort')->unsigned()->default(0);
 
             $table->timestamps();
             $table->softDeletes();
@@ -63,8 +65,6 @@ class TaxonomiesTable extends Migration
 
         Schema::create($this->table_pivot, function(Blueprint $table)
         {
-            $table->increments('id');
-
             $table->integer('taxonomy_id')->unsigned()->index();
             $table->foreign('taxonomy_id')
                 ->references('id')

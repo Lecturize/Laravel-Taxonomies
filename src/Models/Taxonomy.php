@@ -8,36 +8,23 @@ class Taxonomy extends Model
 	use SoftDeletes;
 
 	/**
-	 * The database table used by the model.
-	 *
-	 * @var string
+	 * @inheritdoc
 	 */
 	protected $table = 'taxonomies';
 
 	/**
-	 * The attributes that are mass assignable.
-	 *
-	 * @var array
+	 * @inheritdoc
 	 */
 	protected $fillable = [
 		'term_id',
 		'taxonomy',
 		'desc',
 		'parent',
-		'order',
+		'sort',
 	];
 
 	/**
-	 * The attributes excluded from the model's JSON form.
-	 *
-	 * @var array
-	 */
-	protected $hidden = [];
-
-	/**
-	 * The attributes that should be mutated to dates.
-	 *
-	 * @var array
+	 * @inheritdoc
 	 */
 	protected $dates = ['deleted_at'];
 
@@ -45,12 +32,10 @@ class Taxonomy extends Model
 	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
 	 */
 	public function term() {
-		return $this->belongsTo('vendocrat\Taxonomies\Models\Term');
+		return $this->belongsTo(Term::class);
 	}
 
 	/**
-	 * TODO
-	 *
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
 	 */
 	public function posts()
@@ -63,7 +48,7 @@ class Taxonomy extends Model
 	 */
 	public function parent()
 	{
-		return $this->belongsTo('vendocrat\Taxonomies\Models\Taxonomy', 'parent');
+		return $this->belongsTo(Taxonomy::class, 'parent');
 	}
 
 	/**
@@ -71,23 +56,23 @@ class Taxonomy extends Model
 	 */
 	public function children()
 	{
-		return $this->hasMany('vendocrat\Taxonomies\Models\Taxonomy', 'parent');
+		return $this->hasMany(Taxonomy::class, 'parent');
 	}
 
 	/**
-	 * @param $query
-	 * @param string $taxonomy
+	 * @param  $query
+	 * @param  string $taxonomy
 	 * @return mixed
 	 */
 	public function scopeTaxonomy( $query, $taxonomy )
 	{
-		return $query->where( 'taxonomy', $taxonomy );
+		return $query->where('taxonomy', $taxonomy);
 	}
 
 	/**
-	 * @param $query
-	 * @param string $term
-	 * @param string $taxonomy
+	 * @param  $query
+	 * @param  string $term
+	 * @param  string $taxonomy
 	 * @return mixed
 	 */
 	public function scopeTerm( $query, $term, $taxonomy = 'major' )
@@ -98,9 +83,9 @@ class Taxonomy extends Model
 	}
 
 	/**
-	 * @param $query
-	 * @param string $searchTerm
-	 * @param string $taxonomy
+	 * @param  $query
+	 * @param  string $searchTerm
+	 * @param  string $taxonomy
 	 * @return mixed
 	 */
 	public function scopeSearch( $query, $searchTerm, $taxonomy = 'major' )

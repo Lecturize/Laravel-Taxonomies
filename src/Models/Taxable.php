@@ -4,18 +4,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Taxable extends Model
 {
-
 	/**
-	 * The database table used by the model.
-	 *
-	 * @var string
+	 * @inheritdoc
 	 */
 	protected $table = 'taxables';
 
 	/**
-	 * The attributes that are mass assignable.
-	 *
-	 * @var array
+	 * @inheritdoc
 	 */
 	protected $fillable = [
 		'taxonomy_id',
@@ -24,27 +19,19 @@ class Taxable extends Model
 	];
 
 	/**
-	 * The attributes excluded from the model's JSON form.
-	 *
-	 * @var array
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphTo
 	 */
-	protected $hidden = [];
-
-	/**
-	 * The attributes that should be mutated to dates.
-	 *
-	 * @var array
-	 */
-	protected $dates = [];
-
 	public function taxable()
 	{
 		return $this->morphTo();
 	}
 
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
 	public function taxonomy()
 	{
-		return $this->belongsTo('vendocrat\Taxonomies\Models\Taxonomy', 'taxonomy_id', 'id');
+		return $this->belongsTo(Taxonomy::class, 'taxonomy_id', 'id');
 	}
 
 }
