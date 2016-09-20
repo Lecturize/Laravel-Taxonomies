@@ -24,7 +24,6 @@
         "doctrine/dbal"       : "2.5.x",
         "illuminate/support"  : ">=5.3",
         "illuminate/database" : ">=5.3",
-        "cviebrock/eloquent-sluggable" : "~3.0"
     },
     "require-dev": {
         "mockery/mockery" : "0.9.*"
