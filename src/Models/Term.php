@@ -1,15 +1,12 @@
 <?php namespace vendocrat\Taxonomies\Models;
 
-use Cviebrock\EloquentSluggable\SluggableInterface;
-use Cviebrock\EloquentSluggable\SluggableTrait;
+use Cviebrock\EloquentSluggable\Sluggable;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Term extends Model implements
-	SluggableInterface
-{
-	use SluggableTrait;
+class Term extends Model {
+	use Sluggable;
 	use SoftDeletes;
 
 	/**
@@ -31,16 +28,6 @@ class Term extends Model implements
 	 * @inheritdoc
 	 */
 	protected $dates = ['deleted_at'];
-
-	/**
-	 * Sluggable
-	 *
-	 * @var array
-	 */
-	protected $sluggable = [
-		'build_from' => 'name',
-		'save_to'    => 'slug',
-	];
 
 	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
@@ -101,5 +88,17 @@ class Term extends Model implements
 		return $limit > 0 ? str_limit($name, $limit) : $name;
 	}
 
-
+    /**
+     * Return the sluggable configuration array for this model.
+     *
+     * @return array
+     */
+    public function sluggable()
+    {
+        return [
+            'slug' => [
+                'source' => 'name'
+            ]
+        ];
+    }
 }
