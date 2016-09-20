@@ -18,9 +18,7 @@ class Term extends Model {
 	 * @inheritdoc
 	 */
 	protected $fillable = [
-		'name_de',
-		'name_en',
-		'name_it',
+		'name',
 		'slug',
 	];
 
@@ -49,6 +47,7 @@ class Term extends Model {
 	 * @return mixed
 	 */
 	public function getNameAttribute() {
+	    /*
 		if ( $this->name_en ) {
 			return $this->name_en;
 		} elseif ( $this->name_de ) {
@@ -58,6 +57,8 @@ class Term extends Model {
 		}
 
 		return null;
+	    */
+	    return $this->name;
 	}
 
 	/**
@@ -73,9 +74,9 @@ class Term extends Model {
 		switch ( $locale ) {
 			case 'en' :
 			default :
-				$name = $this->name_en;
+				$name = $this->name;
 				break;
-
+/*
 			case 'de' :
 				$name = $this->name_de;
 				break;
@@ -83,6 +84,7 @@ class Term extends Model {
 			case 'it' :
 				$name = $this->name_it;
 				break;
+*/
 		}
 
 		return $limit > 0 ? str_limit($name, $limit) : $name;
