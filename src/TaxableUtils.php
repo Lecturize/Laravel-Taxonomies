@@ -6,7 +6,13 @@ use vendocrat\Taxonomies\Models\Term;
 class TaxableUtils
 {
 
-	public function createTaxables( $terms, $taxonomy, $parent = 0, $order = 0 )
+    /**
+     * @param $terms
+     * @param $taxonomy
+     * @param int $parent
+     * @param int $order
+     */
+    public function createTaxables($terms, $taxonomy, $parent = 0, $order = 0 )
 	{
 
 		$terms = $this->makeTermsArray($terms);
@@ -16,12 +22,15 @@ class TaxableUtils
 
 	}
 
-	public static function createTerms( array $terms )
+    /**
+     * @param array $terms
+     */
+    public static function createTerms(array $terms )
 	{
 		if ( count($terms) === 0 )
 			return;
 
-		$found = Term::whereIn( 'name', $terms )->lists('name')->all();
+		$found = Term::whereIn( 'name', $terms )->pluck('name')->all();
 
 		if ( ! is_array($found) )
 			$found = array();
@@ -31,13 +40,19 @@ class TaxableUtils
 		}
 	}
 
-	public static function createTaxonomies( array $terms, $taxonomy, $parent = 0, $order = 0 )
+    /**
+     * @param array $terms
+     * @param $taxonomy
+     * @param int $parent
+     * @param int $order
+     */
+    public static function createTaxonomies(array $terms, $taxonomy, $parent = 0, $order = 0 )
 	{
 		if ( count($terms) === 0 )
 			return;
 
 		// only keep terms with existing entries in terms table
-		$terms = Term::whereIn( 'name', $terms )->lists('name')->all();
+		$terms = Term::whereIn( 'name', $terms )->pluck('name')->all();
 
 		// create taxonomy entries for given terms
 		foreach ( $terms as $term ) {

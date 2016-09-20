@@ -40,7 +40,7 @@ trait TaxableTrait
 
 		$this->createTaxables( $terms, $taxonomy, $parent, $order );
 
-		$terms = Term::whereIn( 'name', $terms )->lists('id')->all();
+		$terms = Term::whereIn( 'name', $terms )->pluck('id')->all();
 
 		if ( count($terms) > 0 ) {
 			foreach ( $terms as $term )
@@ -86,7 +86,7 @@ trait TaxableTrait
 	 */
 	public function getTaxonomies( $by = 'id' )
 	{
-		return $this->taxonomies->lists( $by );
+		return $this->taxonomies->pluck( $by );
 	}
 
 	/**
@@ -96,13 +96,13 @@ trait TaxableTrait
 	public function getTerms( $taxonomy = '' )
 	{
 		if ( $taxonomy ) {
-			$term_ids = $this->taxonomies->where( 'taxonomy', $taxonomy )->lists('term_id');
+			$term_ids = $this->taxonomies->where( 'taxonomy', $taxonomy )->pluck('term_id');
 
 		} else {
 			$term_ids = $this->getTaxonomies( 'term_id' );
 		}
 
-		return Term::whereIn( 'id', $term_ids )->lists('name');
+		return Term::whereIn( 'id', $term_ids )->pluck('name');
 	}
 
 	/**
@@ -113,7 +113,7 @@ trait TaxableTrait
 	public function getTerm( $term, $taxonomy = '' )
 	{
 		if ( $taxonomy ) {
-			$term_ids = $this->taxonomies->where( 'taxonomy', $taxonomy )->lists('term_id');
+			$term_ids = $this->taxonomies->where( 'taxonomy', $taxonomy )->pluck('term_id');
 		} else {
 			$term_ids = $this->getTaxonomies( 'term_id' );
 		}
@@ -187,7 +187,7 @@ trait TaxableTrait
 	 * @return
 	 */
 	public function scopeWithTax( $query, $term, $taxonomy ) {
-		$term_ids = Taxonomy::where( 'taxonomy', $taxonomy )->lists('term_id');
+		$term_ids = Taxonomy::where( 'taxonomy', $taxonomy )->pluck('term_id');
 
 		$term = Term::whereIn( 'id', $term_ids )->where( 'name', '=', $term )->first();
 
@@ -205,7 +205,7 @@ trait TaxableTrait
 	 * @return mixed
 	 */
 	public function scopeWithTerm( $query, $term, $taxonomy ) {
-		$term_ids = Taxonomy::where( 'taxonomy', $taxonomy )->lists('term_id');
+		$term_ids = Taxonomy::where( 'taxonomy', $taxonomy )->pluck('term_id');
 
 		$term = Term::whereIn( 'id', $term_ids )->where( 'name', '=', $term )->first();
 
