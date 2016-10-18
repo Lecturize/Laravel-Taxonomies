@@ -15,11 +15,11 @@ class TaxonomiesServiceProvider extends ServiceProvider
 			__DIR__ .'/../config/config.php' => config_path('taxonomies.php')
 		], 'config');
 
-		if ( ! class_exists('CreateAddressesTable') ) {
+		if ( ! class_exists('CreateTaxonomiesTable') ) {
 			$timestamp = date('Y_m_d_His', time());
 
 			$this->publishes([
-				__DIR__ .'/../database/migrations/create_addresses_table.php.stub' =>
+				__DIR__ .'/../database/migrations/create_taxonomies_table.stub' =>
 					database_path('migrations/'. $timestamp .'_create_taxonomies_table.php')
 			], 'migrations');
 		}
