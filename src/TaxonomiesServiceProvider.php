@@ -2,7 +2,7 @@
 
 use Illuminate\Support\ServiceProvider;
 
-class AddressesServiceProvider extends ServiceProvider
+class TaxonomiesServiceProvider extends ServiceProvider
 {
     protected $migrations = [
         'CreateTaxonomiesTable' => 'create_taxonomies_table'
