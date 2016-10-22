@@ -8,31 +8,29 @@ class TaxonomiesServiceProvider extends ServiceProvider
         'CreateTaxonomiesTable' => 'create_taxonomies_table'
     ];
 
-	/**
-	 * Boot the service provider.
-	 *
-	 * @return void
-	 */
+    /**
+     * Boot the service provider.
+     *
+     * @return void
+     */
 	public function boot()
 	{
         $this->handleConfig();
         $this->handleMigrations();
 	}
 
-	/**
-	 * Register the service provider.
-	 *
-	 * @return void
-	 */
+    /**
+     * Register the service provider.
+     *
+     * @return void
+     */
 	public function register()
 	{
 	//  $this->app->singleton(Taxonomies::class);
 	}
 
 	/**
-	 * Get the services provided by the provider.
-	 *
-	 * @return string[]
+     * @inheritdoc
 	 */
 	public function provides()
 	{
