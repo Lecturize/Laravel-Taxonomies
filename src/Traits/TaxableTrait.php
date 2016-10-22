@@ -7,7 +7,7 @@ use Lecturize\Taxonomies\TaxableUtils;
 
 /**
  * Class TaxableTrait
- * @package Lecturize\Taxonomies
+ * @package Lecturize\Taxonomies\Traits
  */
 trait TaxableTrait
 {
