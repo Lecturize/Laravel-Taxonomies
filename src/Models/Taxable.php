@@ -1,10 +1,15 @@
-<?php namespace vendocrat\Taxonomies\Models;
+<?php namespace Lecturize\Taxonomies\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class Taxable
+ * @package Lecturize\Taxonomies\Models
+ */
 class Taxable extends Model
 {
 	/**
+     * @todo make this editable via config file
 	 * @inheritdoc
 	 */
 	protected $table = 'taxables';

@@ -1,13 +1,18 @@
-<?php namespace vendocrat\Taxonomies\Models;
+<?php namespace Lecturize\Taxonomies\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Class Taxonomy
+ * @package Lecturize\Taxonomies\Models
+ */
 class Taxonomy extends Model
 {
 	use SoftDeletes;
 
 	/**
+     * @todo make this editable via config file
 	 * @inheritdoc
 	 */
 	protected $table = 'taxonomies';
@@ -36,11 +41,12 @@ class Taxonomy extends Model
 	}
 
 	/**
+     * An example for a related posts model
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
 	 */
 	public function posts()
 	{
-		return $this->morphedByMany('App\vendocrat\Models\Posts\Post', 'taxable', 'taxables');
+		return $this->morphedByMany('App\Lecturize\Models\Posts\Post', 'taxable', 'taxables');
 	}
 
 	/**

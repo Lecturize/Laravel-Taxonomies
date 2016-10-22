@@ -1,11 +1,16 @@
-<?php namespace vendocrat\Taxonomies\Models;
+<?php namespace Lecturize\Taxonomies\Models;
 
 use Cviebrock\EloquentSluggable\Sluggable;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Term extends Model {
+/**
+ * Class Term
+ * @package Lecturize\Taxonomies\Models
+ */
+class Term extends Model
+{
 	use Sluggable;
 	use SoftDeletes;
 
@@ -15,6 +20,7 @@ class Term extends Model {
 	protected $table = 'terms';
 
 	/**
+     * @todo make this editable via config file
 	 * @inheritdoc
 	 */
 	protected $fillable = [

@@ -1,9 +1,14 @@
-<?php namespace vendocrat\Taxonomies\Contracts;
+<?php namespace Lecturize\Taxonomies\Contracts;
 
 interface TaxableInterface
 {
-
+    /**
+     * @return mixed
+     */
 	public function taxed();
-	public function taxonomies();
 
+    /**
+     * @return mixed
+     */
+	public function taxonomies();
 }

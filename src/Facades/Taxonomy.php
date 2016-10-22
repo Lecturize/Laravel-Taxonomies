@@ -1,6 +1,5 @@
-<?php namespace vendocrat\Taxonomies\Facades;
+<?php namespace Lecturize\Taxonomies\Facades;
 
-use vendocrat\Taxonomies\Taxonomies as TaxonomiesAccessor;
 use Illuminate\Support\Facades\Facade;
 
 class Taxonomy extends Facade
@@ -12,6 +11,6 @@ class Taxonomy extends Facade
 	 */
 	protected static function getFacadeAccessor()
 	{
-		return TaxonomiesAccessor::class;
+		return 'taxonomies';
 	}
 }

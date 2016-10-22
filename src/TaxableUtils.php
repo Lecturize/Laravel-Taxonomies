@@ -1,11 +1,10 @@
-<?php namespace vendocrat\Taxonomies;
+<?php namespace Lecturize\Taxonomies;
 
 use vendocrat\Taxonomies\Models\Taxonomy;
 use vendocrat\Taxonomies\Models\Term;
 
 class TaxableUtils
 {
-
     /**
      * @param $terms
      * @param $taxonomy
@@ -14,12 +13,10 @@ class TaxableUtils
      */
     public function createTaxables($terms, $taxonomy, $parent = 0, $order = 0 )
 	{
-
 		$terms = $this->makeTermsArray($terms);
 
 		$this->createTerms( $terms );
 		$this->createTaxonomies( $terms, $taxonomy, $parent, $order );
-
 	}
 
     /**

@@ -1,9 +1,13 @@
-<?php namespace vendocrat\Taxonomies;
+<?php namespace Lecturize\Taxonomies;
 
 use Illuminate\Support\ServiceProvider;
 
-class TaxonomiesServiceProvider extends ServiceProvider
+class AddressesServiceProvider extends ServiceProvider
 {
+    protected $migrations = [
+        'CreateTaxonomiesTable' => 'create_taxonomies_table'
+    ];
+
 	/**
 	 * Boot the service provider.
 	 *
@@ -11,18 +15,8 @@ class TaxonomiesServiceProvider extends ServiceProvider
 	 */
 	public function boot()
 	{
-		$this->publishes([
-			__DIR__ .'/../config/config.php' => config_path('taxonomies.php')
-		], 'config');
-
-		if ( ! class_exists('CreateAddressesTable') ) {
-			$timestamp = date('Y_m_d_His', time());
-
-			$this->publishes([
-				__DIR__ .'/../database/migrations/create_addresses_table.php.stub' =>
-					database_path('migrations/'. $timestamp .'_create_taxonomies_table.php')
-			], 'migrations');
-		}
+        $this->handleConfig();
+        $this->handleMigrations();
 	}
 
 	/**
@@ -32,14 +26,7 @@ class TaxonomiesServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
-		$this->mergeConfigFrom(
-			__DIR__ .'/../config/config.php',
-			'taxonomies'
-		);
-
-		$this->app->singleton(Taxonomies::class, function ($app) {
-			return new Taxonomies($app);
-		});
+	//  $this->app->singleton(Taxonomies::class);
 	}
 
 	/**
@@ -49,8 +36,39 @@ class TaxonomiesServiceProvider extends ServiceProvider
 	 */
 	public function provides()
 	{
-		return [
-			Taxonomies::class
-		];
+		return [];
 	}
+
+    /**
+     * Publish and merge the config file
+     *
+     * @return void
+     */
+    private function handleConfig()
+    {
+        $configPath = __DIR__ . '/../config/config.php';
+
+        $this->publishes([$configPath => config_path('lecturize.php')]);
+
+        $this->mergeConfigFrom($configPath, 'lecturize');
+    }
+
+    /**
+     * Publish migrations
+     *
+     * @return void
+     */
+    private function handleMigrations()
+    {
+        foreach ( $this->migrations as $class => $file ) {
+            if ( ! class_exists($class) ) {
+                $timestamp = date('Y_m_d_His', time());
+
+                $this->publishes([
+                    __DIR__ .'/../database/migrations/'. $file .'.php.stub' =>
+                        database_path('migrations/'. $timestamp .'_'. $file .'.php')
+                ], 'migrations');
+            }
+        }
+    }
 }
