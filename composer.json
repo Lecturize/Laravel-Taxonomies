@@ -1,7 +1,7 @@
 {
-    "name": "vendocrat/laravel-taxonomies",
+    "name": "lecturize/laravel-taxonomies",
     "description": "Simple, nestable Terms & Taxonomies (similar to WordPress) for Laravel 5.",
-    "homepage" : "https://github.com/AlexanderPoellmann/laravel-taxonomies",
+    "homepage" : "https://github.com/Lecturize/Laravel-Taxonomies",
     "license": "MIT",
     "keywords": [
         "taxonomies",
@@ -40,7 +40,7 @@
         }
     },
     "support" : {
-        "source" : "https://github.com/AlexanderPoellmann/laravel-taxonomies",
-        "issues" : "https://github.com/AlexanderPoellmann/laravel-taxonomies/issues"
+        "source" : "https://github.com/Lecturize/Laravel-Taxonomies",
+        "issues" : "https://github.com/Lecturize/Laravel-Taxonomies/issues"
     }
 }
