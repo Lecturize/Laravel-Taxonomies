@@ -1,13 +1,13 @@
-<?php namespace vendocrat\Taxonomies\Traits;
+<?php namespace Lecturize\Taxonomies\Traits;
 
-use vendocrat\Taxonomies\Models\Taxable;
-use vendocrat\Taxonomies\Models\Taxonomy;
-use vendocrat\Taxonomies\Models\Term;
-use vendocrat\Taxonomies\TaxableUtils;
+use Lecturize\Taxonomies\Models\Taxable;
+use Lecturize\Taxonomies\Models\Taxonomy;
+use Lecturize\Taxonomies\Models\Term;
+use Lecturize\Taxonomies\TaxableUtils;
 
 /**
  * Class TaxableTrait
- * @package vendocrat\Taxonomies
+ * @package Lecturize\Taxonomies
  */
 trait TaxableTrait
 {
