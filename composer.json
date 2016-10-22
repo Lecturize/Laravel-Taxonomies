@@ -31,7 +31,7 @@
     },
     "autoload": {
         "psr-4": {
-            "vendocrat\\Taxonomies\\" : "src/"
+            "Lecturize\\Taxonomies\\" : "src/"
         }
     },
     "extra": {
