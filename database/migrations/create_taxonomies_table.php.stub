@@ -47,6 +47,8 @@ class CreateTaxonomiesTable extends Migration
 
         Schema::create($this->table_taxonomies, function(Blueprint $table)
         {
+	        $table->increments('id');
+
             $table->integer('term_id')->unsigned()->index();
             $table->foreign('term_id')
                 ->references('id')

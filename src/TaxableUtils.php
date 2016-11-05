@@ -27,7 +27,7 @@ class TaxableUtils
 		if ( count($terms) === 0 )
 			return;
 
-		$found = Term::whereIn( 'name', $terms )->pluck('name')->all();
+		$found = Term::whereIn('name', $terms)->pluck('name')->all();
 
 		if ( ! is_array($found) )
 			$found = array();
@@ -49,15 +49,15 @@ class TaxableUtils
 			return;
 
 		// only keep terms with existing entries in terms table
-		$terms = Term::whereIn( 'name', $terms )->pluck('name')->all();
+		$terms = Term::whereIn('name', $terms)->pluck('name')->all();
 
 		// create taxonomy entries for given terms
 		foreach ( $terms as $term ) {
 			Taxonomy::firstOrCreate([
 				'taxonomy' => $taxonomy,
-				'term_id'  => Term::where( 'name', $term )->first()->id,
+				'term_id'  => Term::where('name', $term)->first()->id,
 				'parent'   => $parent,
-				'order'    => $order,
+				'sort'     => $order,
 			]);
 		}
 	}
@@ -70,7 +70,7 @@ class TaxableUtils
 		if ( is_array($terms) ) {
 			return $terms;
 		} else if ( is_string($terms) ) {
-			return explode( '|', $terms );
+			return explode('|', $terms );
 		}
 
 		return (array) $terms;
