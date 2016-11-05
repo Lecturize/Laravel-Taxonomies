@@ -1,7 +1,7 @@
 <?php namespace Lecturize\Taxonomies;
 
-use vendocrat\Taxonomies\Models\Taxonomy;
-use vendocrat\Taxonomies\Models\Term;
+use Lecturize\Taxonomies\Models\Taxonomy;
+use Lecturize\Taxonomies\Models\Term;
 
 class TaxableUtils
 {

@@ -22,9 +22,9 @@ class CreateTaxonomiesTable extends Migration
      */
     public function __construct()
     {
-        $this->table_terms      = config('lecturize.taxonomies.table_terms',      'terms');
-        $this->table_taxonomies = config('lecturize.taxonomies.table_taxonomies', 'taxonomies');
-        $this->table_pivot      = config('lecturize.taxonomies.table_pivot',      'taxables');
+        $this->table_terms      = config('taxonomies.table_terms',      'terms');
+        $this->table_taxonomies = config('taxonomies.table_taxonomies', 'taxonomies');
+        $this->table_pivot      = config('taxonomies.table_pivot',      'taxables');
     }
 
     /**
@@ -47,8 +47,6 @@ class CreateTaxonomiesTable extends Migration
 
         Schema::create($this->table_taxonomies, function(Blueprint $table)
         {
-            $table->increments('id');
-
             $table->integer('term_id')->unsigned()->index();
             $table->foreign('term_id')
                 ->references('id')
@@ -64,6 +62,8 @@ class CreateTaxonomiesTable extends Migration
 
             $table->timestamps();
             $table->softDeletes();
+
+	        $table->unique(['term_id', 'taxonomy']);
         });
 
         Schema::create($this->table_pivot, function(Blueprint $table)
@@ -87,8 +87,8 @@ class CreateTaxonomiesTable extends Migration
      */
     public function down()
     {
-        Schema::drop($this->table_pivot);
-        Schema::drop($this->table_taxonomies);
-        Schema::drop($this->table_terms);
+        Schema::dropIfExists($this->table_pivot);
+        Schema::dropIfExists($this->table_taxonomies);
+        Schema::dropIfExists($this->table_terms);
     }
 }

@@ -48,26 +48,6 @@ class Term extends Model
 	}
 
 	/**
-	 * Get Name Attribute for slugging
-	 *
-	 * @return mixed
-	 */
-	public function getNameAttribute() {
-	    /*
-		if ( $this->name_en ) {
-			return $this->name_en;
-		} elseif ( $this->name_de ) {
-			return $this->name_de;
-		} elseif ( $this->name_it ) {
-			return $this->name_it;
-		}
-
-		return null;
-	    */
-	    return $this->name;
-	}
-
-	/**
 	 * Get Display Name
 	 *
 	 * @param  string $locale
