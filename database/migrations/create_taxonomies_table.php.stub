@@ -55,8 +55,8 @@ class CreateTaxonomiesTable extends Migration
                   ->on($this->table_terms)
                   ->onDelete('cascade');
 
-            $table->string('taxonomy');
-            $table->string('desc');
+            $table->string('taxonomy')->default('default');
+            $table->string('desc')->nullable();
 
             $table->integer('parent')->unsigned()->default(0);
 
@@ -77,8 +77,7 @@ class CreateTaxonomiesTable extends Migration
                   ->on($this->table_taxonomies)
                   ->onDelete('cascade');
             */
-            $table->integer('taxable_id')->unsigned()->index();
-            $table->string('taxable_type');
+            $table->morphs('taxable');
         });
     }
 
