@@ -38,7 +38,7 @@ class CreateTaxonomiesTable extends Migration
         {
             $table->increments('id');
 
-            $table->string('name')->nullable()->unique();
+            $table->string('name')->unique();
             $table->string('slug');
 
             $table->timestamps();
@@ -51,9 +51,9 @@ class CreateTaxonomiesTable extends Migration
 
             $table->integer('term_id')->unsigned()->index();
             $table->foreign('term_id')
-                ->references('id')
-                ->on($this->table_terms)
-                ->onDelete('cascade');
+                  ->references('id')
+                  ->on($this->table_terms)
+                  ->onDelete('cascade');
 
             $table->string('taxonomy');
             $table->string('desc');
@@ -73,9 +73,9 @@ class CreateTaxonomiesTable extends Migration
             $table->integer('taxonomy_id')->unsigned()->index();
             /*
             $table->foreign('taxonomy_id')
-                ->references('id')
-                ->on($this->table_taxonomies)
-                ->onDelete('cascade');
+                  ->references('id')
+                  ->on($this->table_taxonomies)
+                  ->onDelete('cascade');
             */
             $table->integer('taxable_id')->unsigned()->index();
             $table->string('taxable_type');
