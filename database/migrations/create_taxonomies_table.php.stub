@@ -77,7 +77,7 @@ class CreateTaxonomiesTable extends Migration
                   ->on($this->table_taxonomies)
                   ->onDelete('cascade');
             */
-            $table->morphs('taxable');
+            $table->nullableMorphs('taxable');
         });
     }
 

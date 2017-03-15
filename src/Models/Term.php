@@ -31,7 +31,9 @@ class Term extends Model
 	/**
 	 * @inheritdoc
 	 */
-	protected $dates = ['deleted_at'];
+	protected $dates = [
+	    'deleted_at'
+    ];
 
 	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
@@ -54,10 +56,10 @@ class Term extends Model
 	 * @param  int    $limit
 	 * @return mixed
 	 */
-	public function getDisplayName( $locale = '', $limit = 0 ) {
+	public function getDisplayName($locale = '', $limit = 0) {
 		$locale = $locale ?: app()->getLocale();
 
-		switch ( $locale ) {
+		switch ($locale) {
 			case 'en' :
 			default :
 				$name = $this->name;

@@ -84,35 +84,46 @@ trait HasTaxonomies
 	 * @param string $by
 	 * @return mixed
 	 */
-	public function getTaxonomies($by = 'id' )
+	public function getTaxonomies($by = 'id')
 	{
 		return $this->taxonomies->pluck($by);
 	}
 
 	/**
-	 * @param string $taxonomy
+	 * @param  string  $taxonomy
 	 * @return mixed
 	 */
-	public function getTerms( $taxonomy = '' )
+	public function getTermNames($taxonomy = '')
 	{
-		if ( $taxonomy ) {
-			$term_ids = $this->taxonomies->where('taxonomy', $taxonomy)->pluck('term_id');
+		if ($terms = $this->getTerms($taxonomy))
+            $terms->pluck('name');
 
+		return null;
+	}
+
+	/**
+     * @param  string  $taxonomy
+	 * @return mixed
+	 */
+	public function getTerms($taxonomy = '')
+	{
+		if ($taxonomy) {
+			$term_ids = $this->taxonomies->where('taxonomy', $taxonomy)->pluck('term_id');
 		} else {
 			$term_ids = $this->getTaxonomies('term_id');
 		}
 
-		return Term::whereIn('id', $term_ids)->pluck('name');
+		return Term::whereIn('id', $term_ids)->get();
 	}
 
 	/**
-	 * @param $term
-	 * @param string $taxonomy
+	 * @param  $term
+     * @param  string  $taxonomy
 	 * @return mixed
 	 */
-	public function getTerm( $term, $taxonomy = '' )
+	public function getTerm($term, $taxonomy = '')
 	{
-		if ( $taxonomy ) {
+        if ($taxonomy) {
 			$term_ids = $this->taxonomies->where('taxonomy', $taxonomy)->pluck('term_id');
 		} else {
 			$term_ids = $this->getTaxonomies('term_id');
