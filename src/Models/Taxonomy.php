@@ -46,7 +46,7 @@ class Taxonomy extends Model
 	 */
 	public function posts()
 	{
-		return $this->morphedByMany('App\Lecturize\Models\Posts\Post', 'taxable', 'taxables');
+		return $this->morphedByMany('App\Models\Posts\Post', 'taxable', 'taxables');
 	}
 
 	/**
