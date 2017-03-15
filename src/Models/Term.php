@@ -35,6 +35,20 @@ class Term extends Model
 	    'deleted_at'
     ];
 
+    /**
+     * Return the sluggable configuration array for this model.
+     *
+     * @return array
+     */
+    public function sluggable()
+    {
+        return [
+            'slug' => [
+                'source' => 'name'
+            ]
+        ];
+    }
+
 	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
 	 */
@@ -50,13 +64,14 @@ class Term extends Model
 	}
 
 	/**
-	 * Get Display Name
+	 * Get display name.
 	 *
 	 * @param  string $locale
 	 * @param  int    $limit
 	 * @return mixed
 	 */
-	public function getDisplayName($locale = '', $limit = 0) {
+	public function getDisplayName($locale = '', $limit = 0)
+    {
 		$locale = $locale ?: app()->getLocale();
 
 		switch ($locale) {
@@ -78,17 +93,40 @@ class Term extends Model
 		return $limit > 0 ? str_limit($name, $limit) : $name;
 	}
 
+	/**
+	 * Get route parameters.
+	 *
+     * @param  string  $taxonomy
+	 * @return mixed
+	 */
+	public function getRouteParameters($taxonomy)
+    {
+        $taxonomy = Taxonomy::taxonomy($taxonomy)
+                            ->term($this->name)
+                            ->with('parent')
+                            ->first();
+
+        $parameters = $this->getParentSlugs($taxonomy);
+
+        array_push($parameters, $taxonomy->taxonomy);
+
+        return array_reverse($parameters);
+	}
+
     /**
-     * Return the sluggable configuration array for this model.
+     * Get slugs of parent terms.
      *
+     * @param  Taxonomy  $taxonomy
+     * @param  array     $parameters
      * @return array
      */
-    public function sluggable()
+    function getParentSlugs(Taxonomy $taxonomy, $parameters = [])
     {
-        return [
-            'slug' => [
-                'source' => 'name'
-            ]
-        ];
+        array_push($parameters, $taxonomy->term->slug);
+
+        if (($parents = $taxonomy->parent()) && ($parent = $parents->first()))
+            return $this->getParentSlugs($parent, $parameters);
+
+        return $parameters;
     }
 }
