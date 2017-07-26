@@ -8,25 +8,21 @@ class TaxonomiesServiceProvider extends ServiceProvider
         'CreateTaxonomiesTable' => 'create_taxonomies_table'
     ];
 
-    /**
-     * Boot the service provider.
-     *
-     * @return void
-     */
+	/**
+     * @inheritdoc
+	 */
 	public function boot()
 	{
         $this->handleConfig();
         $this->handleMigrations();
 	}
 
-    /**
-     * Register the service provider.
-     *
-     * @return void
-     */
+	/**
+     * @inheritdoc
+	 */
 	public function register()
 	{
-	//  $this->app->singleton(Taxonomies::class);
+	    //
 	}
 
 	/**
@@ -38,7 +34,7 @@ class TaxonomiesServiceProvider extends ServiceProvider
 	}
 
     /**
-     * Publish and merge the config file
+     * Publish and merge the config file.
      *
      * @return void
      */
@@ -52,14 +48,14 @@ class TaxonomiesServiceProvider extends ServiceProvider
     }
 
     /**
-     * Publish migrations
+     * Publish migrations.
      *
      * @return void
      */
     private function handleMigrations()
     {
-        foreach ( $this->migrations as $class => $file ) {
-            if ( ! class_exists($class) ) {
+        foreach ($this->migrations as $class => $file) {
+            if (! class_exists($class)) {
                 $timestamp = date('Y_m_d_His', time());
 
                 $this->publishes([
