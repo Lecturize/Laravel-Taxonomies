@@ -9,22 +9,24 @@ use Illuminate\Database\Migrations\Migration;
 class CreateTaxonomiesTable extends Migration
 {
     /**
-     * @var string $table_terms      The terms table name.
-     * @var string $table_taxonomies The taxonomies table name.
-     * @var string $table_pivot      The pivot table name.
+     * Table names.
+     *
+     * @var string  $table_terms       The terms table name.
+     * @var string  $table_taxonomies  The taxonomies table name.
+     * @var string  $table_pivot       The pivot table name.
      */
-    private $table_terms;
-    private $table_taxonomies;
-    private $table_pivot;
+    protected $table_terms;
+    protected $table_taxonomies;
+    protected $table_pivot;
 
     /**
-     * Constructor
+     * Create a new migration instance.
      */
     public function __construct()
     {
-        $this->table_terms      = config('taxonomies.table_terms',      'terms');
-        $this->table_taxonomies = config('taxonomies.table_taxonomies', 'taxonomies');
-        $this->table_pivot      = config('taxonomies.table_pivot',      'taxables');
+        $this->table_terms      = config('lecturize.taxonomies.table_terms',      'terms');
+        $this->table_taxonomies = config('lecturize.taxonomies.table_taxonomies', 'taxonomies');
+        $this->table_pivot      = config('lecturize.taxonomies.table_pivot',      'taxables');
     }
 
     /**
@@ -49,8 +51,9 @@ class CreateTaxonomiesTable extends Migration
         {
 	        $table->increments('id');
 
-            $table->integer('term_id')->unsigned()->index();
-            $table->foreign('term_id')
+            $table->integer('term_id')
+                  ->nullable()
+                  ->unsigned()
                   ->references('id')
                   ->on($this->table_terms)
                   ->onDelete('cascade');
@@ -70,13 +73,12 @@ class CreateTaxonomiesTable extends Migration
 
         Schema::create($this->table_pivot, function(Blueprint $table)
         {
-            $table->integer('taxonomy_id')->unsigned()->index();
-            /*
-            $table->foreign('taxonomy_id')
+            $table->integer('taxonomy_id')
+                  ->nullable()
+                  ->unsigned()
                   ->references('id')
-                  ->on($this->table_taxonomies)
-                  ->onDelete('cascade');
-            */
+                  ->on($this->table_taxonomies);
+
             $table->nullableMorphs('taxable');
         });
     }
