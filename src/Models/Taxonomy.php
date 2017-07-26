@@ -12,12 +12,6 @@ class Taxonomy extends Model
 	use SoftDeletes;
 
 	/**
-     * @todo make this editable via config file
-	 * @inheritdoc
-	 */
-	protected $table = 'taxonomies';
-
-	/**
 	 * @inheritdoc
 	 */
 	protected $fillable = [
@@ -32,6 +26,16 @@ class Taxonomy extends Model
 	 * @inheritdoc
 	 */
 	protected $dates = ['deleted_at'];
+
+    /**
+     * @inheritdoc
+     */
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->table = config('lecturize.taxonomies.table_taxonomies', 'taxonomies');
+    }
 
 	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

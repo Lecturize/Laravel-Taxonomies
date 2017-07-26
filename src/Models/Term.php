@@ -17,12 +17,6 @@ class Term extends Model
 	/**
 	 * @inheritdoc
 	 */
-	protected $table = 'terms';
-
-	/**
-     * @todo make this editable via config file
-	 * @inheritdoc
-	 */
 	protected $fillable = [
 		'name',
 		'slug',
@@ -31,9 +25,17 @@ class Term extends Model
 	/**
 	 * @inheritdoc
 	 */
-	protected $dates = [
-	    'deleted_at'
-    ];
+    protected $dates = ['deleted_at'];
+
+    /**
+     * @inheritdoc
+     */
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->table = config('lecturize.taxonomies.table_terms', 'terms');
+    }
 
     /**
      * Return the sluggable configuration array for this model.

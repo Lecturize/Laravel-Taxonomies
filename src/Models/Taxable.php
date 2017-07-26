@@ -9,12 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 class Taxable extends Model
 {
 	/**
-     * @todo make this editable via config file
-	 * @inheritdoc
-	 */
-	protected $table = 'taxables';
-
-	/**
 	 * @inheritdoc
 	 */
 	protected $fillable = [
@@ -22,6 +16,16 @@ class Taxable extends Model
 		'taxable_id',
 		'taxable_type'
 	];
+
+    /**
+     * @inheritdoc
+     */
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->table = config('lecturize.taxonomies.table_pivot','taxables');
+    }
 
 	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphTo
