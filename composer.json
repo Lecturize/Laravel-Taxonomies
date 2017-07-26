@@ -20,14 +20,16 @@
         }
     ],
     "require": {
-        "php"                 : ">=5.6.4",
-        "doctrine/dbal"       : "2.5.x",
+        "php"                 : ">=5.6.4|^7.0",
         "illuminate/support"  : ">=5.3",
         "illuminate/database" : ">=5.3",
         "cviebrock/eloquent-sluggable" : "^4.1.0"
     },
     "require-dev": {
-        "mockery/mockery" : "0.9.*"
+        "laravel/framework" : "5.4.*",
+        "mockery/mockery" : "0.9.*",
+        "phpunit/phpunit" : "^6.0",
+        "doctrine/dbal"   : "2.5.x"
     },
     "autoload": {
         "psr-4": {
