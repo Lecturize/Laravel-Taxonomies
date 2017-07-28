@@ -40,8 +40,8 @@ class CreateTaxonomiesTable extends Migration
         {
             $table->increments('id');
 
-            $table->string('name')->unique();
-            $table->string('slug');
+            $table->string('name')->nullable()->unique();
+            $table->string('slug')->nullable()->unique();
 
             $table->timestamps();
             $table->softDeletes();

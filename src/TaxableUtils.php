@@ -3,77 +3,88 @@
 use Lecturize\Taxonomies\Models\Taxonomy;
 use Lecturize\Taxonomies\Models\Term;
 
+/**
+ * Class TaxableUtils
+ * @package Lecturize\Taxonomies
+ */
 class TaxableUtils
 {
     /**
-     * @param $terms
-     * @param $taxonomy
-     * @param int $parent
-     * @param int $order
+     * @param mixed    $terms
+     * @param string   $taxonomy
+     * @param integer  $parent
+     * @param integer  $order
      */
-    public function createTaxables($terms, $taxonomy, $parent = 0, $order = 0 )
+    public function createTaxables($terms, $taxonomy, $parent = 0, $order = 0)
 	{
 		$terms = $this->makeTermsArray($terms);
 
-		$this->createTerms( $terms );
-		$this->createTaxonomies( $terms, $taxonomy, $parent, $order );
+		$this->createTerms($terms);
+		$this->createTaxonomies($terms, $taxonomy, $parent, $order);
 	}
 
     /**
      * @param array $terms
      */
-    public static function createTerms(array $terms )
+    public static function createTerms(array $terms)
 	{
-		if ( count($terms) === 0 )
-			return;
+		if (count($terms) > 0) {
+			$found = Term::whereIn('name', $terms)->pluck('name')->all();
 
-		$found = Term::whereIn('name', $terms)->pluck('name')->all();
+			if (! is_array($found))
+				$found = [];
 
-		if ( ! is_array($found) )
-			$found = array();
+			foreach (array_diff($terms, $found) as $name) {
+				if (Term::where('name', $name)->first())
+					continue;
 
-		foreach ( array_diff( $terms, $found ) as $term ) {
-			Term::firstOrCreate([ 'name' => $term ]);
+				$term = new Term;
+				$term->name = $name;
+				$term->save();
+			}
 		}
 	}
 
     /**
-     * @param array $terms
-     * @param $taxonomy
-     * @param int $parent
-     * @param int $order
+     * @param array    $terms
+     * @param string   $taxonomy
+     * @param integer  $parent
+     * @param integer  $order
      */
-    public static function createTaxonomies(array $terms, $taxonomy, $parent = 0, $order = 0 )
+    public static function createTaxonomies(array $terms, $taxonomy, $parent = 0, $order = 0)
 	{
-		if ( count($terms) === 0 )
-			return;
+		if (count($terms) > 0) {
+			// only keep terms with existing entries in terms table
+			$terms = Term::whereIn('name', $terms)->pluck('name')->all();
 
-		// only keep terms with existing entries in terms table
-		$terms = Term::whereIn('name', $terms)->pluck('name')->all();
+			// create taxonomy entries for given terms
+			foreach ($terms as $term) {
+				$term_id = Term::where('name', $term)->first()->id;
 
-		// create taxonomy entries for given terms
-		foreach ( $terms as $term ) {
-			Taxonomy::firstOrCreate([
-				'taxonomy' => $taxonomy,
-				'term_id'  => Term::where('name', $term)->first()->id,
-				'parent'   => $parent,
-				'sort'     => $order,
-			]);
+				if (Taxonomy::where('taxonomy', $taxonomy)->where('term_id', $term_id)->where('parent', $parent)->where('sort', $order)->first())
+					continue;
+
+				$model = new Taxonomy;
+				$model->taxonomy = $taxonomy;
+				$model->term_id  = $term_id;
+				$model->parent   = $parent;
+				$model->sort     = $order;
+				$model->save();
+			}
 		}
 	}
 
 	/**
-	 * @param string|array $terms
+	 * @param  string|array  $terms
 	 * @return array
 	 */
-	public static function makeTermsArray( $terms ) {
-		if ( is_array($terms) ) {
+	public static function makeTermsArray($terms) {
+		if (is_array($terms)) {
 			return $terms;
-		} else if ( is_string($terms) ) {
-			return explode('|', $terms );
+		} else if (is_string($terms)) {
+			return explode('|', $terms);
 		}
 
 		return (array) $terms;
 	}
-
 }

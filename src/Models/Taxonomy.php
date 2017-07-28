@@ -70,22 +70,22 @@ class Taxonomy extends Model
 	}
 
 	/**
-	 * @param  $query
-	 * @param  string $taxonomy
+	 * @param  object  $query
+	 * @param  string  $taxonomy
 	 * @return mixed
 	 */
-	public function scopeTaxonomy( $query, $taxonomy )
+	public function scopeTaxonomy($query, $taxonomy)
 	{
 		return $query->where('taxonomy', $taxonomy);
 	}
 
 	/**
-	 * @param  $query
-	 * @param  string $term
-	 * @param  string $taxonomy
+	 * @param  object  $query
+	 * @param  string  $term
+	 * @param  string  $taxonomy
 	 * @return mixed
 	 */
-	public function scopeTerm( $query, $term, $taxonomy = 'major' )
+	public function scopeTerm($query, $term, $taxonomy = 'major')
 	{
 		return $query->whereHas('term', function($q) use($term, $taxonomy) {
 			$q->where('name', $term);
@@ -93,12 +93,12 @@ class Taxonomy extends Model
 	}
 
 	/**
-	 * @param  $query
-	 * @param  string $searchTerm
-	 * @param  string $taxonomy
+	 * @param  object  $query
+	 * @param  string  $searchTerm
+	 * @param  string  $taxonomy
 	 * @return mixed
 	 */
-	public function scopeSearch( $query, $searchTerm, $taxonomy = 'major' )
+	public function scopeSearch($query, $searchTerm, $taxonomy = 'major')
 	{
 		return $query->whereHas('term', function($q) use($searchTerm, $taxonomy) {
 			$q->where('name', 'like', '%'. $searchTerm .'%');

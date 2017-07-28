@@ -29,23 +29,22 @@ trait HasTaxonomies
 	}
 
 	/**
-	 * @param $terms
-	 * @param $taxonomy
-	 * @param int $parent
-	 * @param int $order
+	 * @param mixed    $terms
+	 * @param string   $taxonomy
+	 * @param integer  $parent
+	 * @param integer  $order
 	 */
-	public function addTerm( $terms, $taxonomy, $parent = 0, $order = 0 )
+	public function addTerm($terms, $taxonomy, $parent = 0, $order = 0)
 	{
 		$terms = TaxableUtils::makeTermsArray($terms);
 
-		$this->createTaxables($terms, $taxonomy, $parent, $order );
+		$this->createTaxables($terms, $taxonomy, $parent, $order);
 
 		$terms = Term::whereIn('name', $terms)->pluck('id')->all();
 
-		if ( count($terms) > 0 ) {
-			foreach ( $terms as $term )
-			{
-				if ( $this->taxonomies()->where('taxonomy', $taxonomy)->where('term_id', $term)->first() )
+		if (count($terms) > 0) {
+			foreach ($terms as $term) {
+				if ($this->taxonomies()->where('taxonomy', $taxonomy)->where('term_id', $term)->first())
 					continue;
 
 				$tax = Taxonomy::where('term_id', $term)->first();
@@ -59,20 +58,20 @@ trait HasTaxonomies
 	}
 
 	/**
-	 * @param $taxonomy_id
+	 * @param  integer  $taxonomy_id
 	 */
-	public function setCategory( $taxonomy_id )
+	public function setCategory($taxonomy_id)
 	{
 		$this->taxonomies()->attach($taxonomy_id);
 	}
 
 	/**
-	 * @param $terms
-	 * @param $taxonomy
-	 * @param int $parent
-	 * @param int $order
+	 * @param mixed    $terms
+	 * @param string   $taxonomy
+	 * @param integer  $parent
+	 * @param integer  $order
 	 */
-	public function createTaxables( $terms, $taxonomy, $parent = 0, $order = 0 )
+	public function createTaxables($terms, $taxonomy, $parent = 0, $order = 0)
 	{
 		$terms = TaxableUtils::makeTermsArray($terms);
 
@@ -81,7 +80,7 @@ trait HasTaxonomies
 	}
 
 	/**
-	 * @param string $by
+	 * @param  string  $by
 	 * @return mixed
 	 */
 	public function getTaxonomies($by = 'id')
@@ -117,7 +116,7 @@ trait HasTaxonomies
 	}
 
 	/**
-	 * @param  $term
+	 * @param  string  $term
      * @param  string  $taxonomy
 	 * @return mixed
 	 */
@@ -129,13 +128,13 @@ trait HasTaxonomies
 			$term_ids = $this->getTaxonomies('term_id');
 		}
 
-		return Term::whereIn('id', $term_ids)->where('name', '=', $term)->first();
+		return Term::whereIn('id', $term_ids)->where('name', $term)->first();
 	}
 
 	/**
-	 * @param $term
-	 * @param string $taxonomy
-	 * @return bool
+	 * @param  string  $term
+	 * @param  string  $taxonomy
+	 * @return boolean
 	 */
 	public function hasTerm( $term, $taxonomy = '' )
 	{
@@ -143,13 +142,13 @@ trait HasTaxonomies
 	}
 
 	/**
-	 * @param $term
-	 * @param string $taxonomy
+	 * @param  string  $term
+	 * @param  string  $taxonomy
 	 * @return mixed
 	 */
-	public function removeTerm( $term, $taxonomy = '' )
+	public function removeTerm($term, $taxonomy = '')
 	{
-		if ( $term = $this->getTerm($term, $taxonomy) ) {
+		if ($term = $this->getTerm($term, $taxonomy)) {
 			if ( $taxonomy ) {
 				$taxonomy = $this->taxonomies->where('taxonomy', $taxonomy)->where('term_id', $term->id)->first();
 			} else {
@@ -163,6 +162,8 @@ trait HasTaxonomies
 	}
 
 	/**
+	 * Remove all terms.
+	 *
 	 * @return mixed
 	 */
 	public function removeAllTerms()
@@ -171,33 +172,33 @@ trait HasTaxonomies
 	}
 
 	/**
-	 * Filter model to subset with the given tags
+	 * Filter model to subset with the given tags.
 	 *
-	 * @param object $query
-	 * @param array $terms
-	 * @param string $taxonomy
-	 * @return object $query
+	 * @param  object  $query
+	 * @param  array   $terms
+	 * @param  string  $taxonomy
+	 * @return object  $query
 	 */
 	public function scopeWithTerms( $query, $terms, $taxonomy )
 	{
 		$terms = TaxableUtils::makeTermsArray($terms);
 
-		foreach ( $terms as $term ) {
+		foreach ($terms as $term)
 			$this->scopeWithTerm($query, $term, $taxonomy);
-		}
 
 		return $query;
 	}
 
 	/**
-	 * Filter model to subset with the given tags
+	 * Filter model to subset with the given tags.
 	 *
-	 * @param object $query
-	 * @param string $term
-	 * @param string $taxonomy
-	 * @return
+	 * @param  object  $query
+	 * @param  string  $term
+	 * @param  string  $taxonomy
+	 * @return mixed
 	 */
-	public function scopeWithTax( $query, $term, $taxonomy ) {
+	public function scopeWithTax($query, $term, $taxonomy)
+	{
 		$term_ids = Taxonomy::where('taxonomy', $taxonomy)->pluck('term_id');
 
 		$term = Term::whereIn('id', $term_ids)->where('name', '=', $term)->first();
@@ -210,12 +211,13 @@ trait HasTaxonomies
 	}
 
 	/**
-	 * @param $query
-	 * @param $term
-	 * @param $taxonomy
+	 * @param  object  $query
+	 * @param  string  $term
+	 * @param  string  $taxonomy
 	 * @return mixed
 	 */
-	public function scopeWithTerm( $query, $term, $taxonomy ) {
+	public function scopeWithTerm($query, $term, $taxonomy)
+	{
 		$term_ids = Taxonomy::where('taxonomy', $taxonomy)->pluck('term_id');
 
 		$term = Term::whereIn('id', $term_ids)->where('name', '=', $term)->first();
@@ -228,11 +230,13 @@ trait HasTaxonomies
 	}
 
 	/**
-	 * @param $query
-	 * @param $taxonomy_id
+	 * Scope by category id.
+	 *
+	 * @param  object   $query
+	 * @param  integer  $taxonomy_id
 	 * @return mixed
 	 */
-	public function scopeHasCategory( $query, $taxonomy_id ) {
+	public function scopeHasCategory($query, $taxonomy_id) {
 		return $query->whereHas('taxed', function($q) use($taxonomy_id) {
 			$q->where('taxonomy_id', $taxonomy_id);
 		});
