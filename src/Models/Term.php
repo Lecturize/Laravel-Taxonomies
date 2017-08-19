@@ -38,9 +38,7 @@ class Term extends Model
     }
 
     /**
-     * Return the sluggable configuration array for this model.
-     *
-     * @return array
+     * @inheritdoc
      */
     public function sluggable()
     {
@@ -59,6 +57,8 @@ class Term extends Model
 	}
 
 	/**
+	 * Get the taxonomies this term belongs to.
+	 *
 	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
 	 */
 	public function taxonomies() {
@@ -68,17 +68,17 @@ class Term extends Model
 	/**
 	 * Get display name.
 	 *
-	 * @param  string $locale
-	 * @param  int    $limit
+	 * @param  string  $locale
+	 * @param  int     $limit
 	 * @return mixed
 	 */
 	public function getDisplayName($locale = '', $limit = 0)
-  {
+	{
 		$locale = $locale ?: app()->getLocale();
 
-    $property_with_locale = $locale === 'en' ? "name" : "name_$locale";
+		$property_with_locale = $locale === 'en' ? "name" : "name_$locale";
 
-    $name = property_exists($this, $property_with_locale) ? $this->{$property_with_locale} : $this->name;
+		$name = property_exists($this, $property_with_locale) ? $this->{$property_with_locale} : $this->name;
 
 		return $limit > 0 ? str_limit($name, $limit) : $name;
 	}

@@ -38,6 +38,8 @@ class Taxonomy extends Model
     }
 
 	/**
+	 * Get the term this taxonomy belongs to.
+	 *
 	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
 	 */
 	public function term() {
@@ -45,7 +47,8 @@ class Taxonomy extends Model
 	}
 
 	/**
-     * An example for a related posts model
+     * An example for a related posts model.
+	 *
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
 	 */
 	public function posts()
@@ -54,6 +57,8 @@ class Taxonomy extends Model
 	}
 
 	/**
+	 * Get the parent taxonomy.
+	 *
 	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
 	 */
 	public function parent()
@@ -62,6 +67,8 @@ class Taxonomy extends Model
 	}
 
 	/**
+	 * Get the children taxonomies.
+	 *
 	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
 	 */
 	public function children()
@@ -70,6 +77,8 @@ class Taxonomy extends Model
 	}
 
 	/**
+	 * Scope taxonomies.
+	 *
 	 * @param  object  $query
 	 * @param  string  $taxonomy
 	 * @return mixed
@@ -80,6 +89,8 @@ class Taxonomy extends Model
 	}
 
 	/**
+	 * Scope terms.
+	 *
 	 * @param  object  $query
 	 * @param  string  $term
 	 * @param  string  $taxonomy
@@ -93,6 +104,8 @@ class Taxonomy extends Model
 	}
 
 	/**
+	 * A simple search scope.
+	 *
 	 * @param  object  $query
 	 * @param  string  $searchTerm
 	 * @param  string  $taxonomy
@@ -104,5 +117,4 @@ class Taxonomy extends Model
 			$q->where('name', 'like', '%'. $searchTerm .'%');
 		});
 	}
-
 }
