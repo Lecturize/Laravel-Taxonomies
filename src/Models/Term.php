@@ -73,24 +73,12 @@ class Term extends Model
 	 * @return mixed
 	 */
 	public function getDisplayName($locale = '', $limit = 0)
-    {
+  {
 		$locale = $locale ?: app()->getLocale();
 
-		switch ($locale) {
-			case 'en' :
-			default :
-				$name = $this->name;
-				break;
-/*
-			case 'de' :
-				$name = $this->name_de;
-				break;
+    $property_with_locale = $locale === 'en' ? "name" : "name_$locale";
 
-			case 'it' :
-				$name = $this->name_it;
-				break;
-*/
-		}
+    $name = property_exists($this, $property_with_locale) ? $this->{$property_with_locale} : $this->name;
 
 		return $limit > 0 ? str_limit($name, $limit) : $name;
 	}
