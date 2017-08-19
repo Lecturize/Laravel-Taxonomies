@@ -18,7 +18,7 @@ Require the package from your `composer.json` file
 
 ```php
 "require": {
-	"lecturize/laravel-taxonomies": "dev-master"
+    "lecturize/laravel-taxonomies": "dev-master"
 }
 ```
 
@@ -28,19 +28,20 @@ Next register the service provider and (optional) facade to your `config/app.php
 
 ```php
 'providers' => [
-    // Illuminate Providers ...
-    // App Providers ...
-    Lecturize\Taxonomies\TaxonomiesServiceProvider::class
+    // ...
+    Cviebrock\EloquentSluggable\ServiceProvider::class,
+    Lecturize\Taxonomies\TaxonomiesServiceProvider::class,
 ];
 ```
 
 ## Configuration & Migration
 
 ```bash
+$ php artisan vendor:publish --provider="Cviebrock\EloquentSluggable\ServiceProvider"
 $ php artisan vendor:publish --provider="Lecturize\Taxonomies\TaxonomiesServiceProvider"
 ```
 
-This will create a `config/lecturize.php` and a migration file. In the config file you can customize the table names, finally you'll have to run migration like so:
+This will create a `config/sluggable.php`, a `config/lecturize.php` and a migration file, that you'll have to run like so:
 
 ```bash
 $ php artisan migrate
@@ -50,37 +51,37 @@ $ php artisan migrate
 
 ##### Add a Term
 ```php
-$model->addTerm( 'My Category', 'taxonomy' )
+$model->addTerm('My Category', 'taxonomy')
 ```
 
 ##### Add multiple Terms
 ```php
-$model->addTerm( ['Add','Multiple','Categories'], 'taxonomy' )
+$model->addTerm(['Add','Multiple','Categories'], 'taxonomy')
 ```
 
 ##### Add a Term with optional parent (taxonomy) & order
 ```php
-$model->addTerm( 'My Category', 'taxonomy', 1, 2 )
+$model->addTerm('My Category', 'taxonomy', 1, 2)
 ```
 
 ##### Get all Terms for a model by taxonomy
 ```php
-$model->getTerms( 'taxonomy' )
+$model->getTerms('taxonomy')
 ```
 
 ##### Get a specific Term for a model by (optional) taxonomy
 ```php
-$model->getTerm( 'My Category', 'taxonomy' )
+$model->getTerm('My Category', 'taxonomy')
 ```
 
 ##### Convenience method for getTerm()
 ```php
-$model->hasTerm( $term, 'taxonomy' )
+$model->hasTerm($term, 'taxonomy')
 ```
 
 ##### Remove a Term from model by (optional) taxonomy
 ```php
-$model->removeTerm( $term, 'taxonomy' )
+$model->removeTerm($term, 'taxonomy')
 ```
 
 ##### Remove all Terms from model
@@ -90,12 +91,12 @@ $model->removeAllTerms()
 
 ##### Scope models with multiple Terms
 ```php
-$model = Model::withTerms( $terms, 'taxonomy' )->get();
+$model = Model::withTerms($terms, 'taxonomy')->get();
 ```
 
 ##### Scope models with one Term
 ```php
-$model = Model::withTerm( $term, 'taxonomy' )->get();
+$model = Model::withTerm($term, 'taxonomy')->get();
 ```
 
 ## Example
@@ -105,8 +106,8 @@ $model = Model::withTerm( $term, 'taxonomy' )->get();
 ```php
 $post = Post::find(1);
 
-$post->addTerm( 'My First Category', 'category' );
-$post->addTerm( ['Category Two', 'Category Three'], 'category' );
+$post->addTerm('My First Category', 'category');
+$post->addTerm(['Category Two', 'Category Three'], 'category');
 ```
 
 First fo all, this snippet will create three entries in your `terms` table, if they don't already exist:
@@ -121,7 +122,7 @@ And last it will relate the entries from your `taxonomies` table with your model
 
 **Why three tables?**
 
-Imagine you have a Taxonomy called *post_cat* and another one *product_cat*, the first categorises your blog posts, the second the products in your online shop. Now you add a product to a category (a *term*) called *Shoes* using `$product->addTerm( 'Sheos', 'product_cat' );`. Afterwards you want to blog about that product and add that post to a *post_cat* called *Shoes* as well, using `$product->addTerm( 'Sheos', 'post_cat' );`.
+Imagine you have a Taxonomy called *post_cat* and another one *product_cat*, the first categorises your blog posts, the second the products in your online shop. Now you add a product to a category (a *term*) called *Shoes* using `$product->addTerm('Sheos', 'product_cat');`. Afterwards you want to blog about that product and add that post to a *post_cat* called *Shoes* as well, using `$product->addTerm('Sheos', 'post_cat');`.
 
 Normally you would have two entries now in your database, one like `['Sheos','product_cat']` and another `['Sheos','post_at']`. Oops, now you recognize you misspelled *Shoes*, now you would have to change it twice, for each Taxonomy.
 
