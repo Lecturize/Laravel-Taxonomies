@@ -49,7 +49,7 @@ class CreateTaxonomiesTable extends Migration
 
         Schema::create($this->table_taxonomies, function(Blueprint $table)
         {
-	        $table->increments('id');
+             $table->increments('id');
 
             $table->integer('term_id')
                   ->nullable()
@@ -68,7 +68,7 @@ class CreateTaxonomiesTable extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-	        $table->unique(['term_id', 'taxonomy']);
+             $table->unique(['term_id', 'taxonomy']);
         });
 
         Schema::create($this->table_pivot, function(Blueprint $table)

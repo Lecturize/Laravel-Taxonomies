@@ -5,10 +5,10 @@ interface TaxableInterface
     /**
      * @return mixed
      */
-	public function taxed();
+     public function taxed();
 
     /**
      * @return mixed
      */
-	public function taxonomies();
+     public function taxonomies();
 }

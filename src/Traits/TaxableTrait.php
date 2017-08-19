@@ -7,5 +7,5 @@
  */
 trait TaxableTrait
 {
-	use HasTaxonomies;
+     use HasTaxonomies;
 }
