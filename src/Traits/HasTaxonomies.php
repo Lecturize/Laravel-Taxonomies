@@ -12,7 +12,8 @@ use Lecturize\Taxonomies\TaxableUtils;
 trait HasTaxonomies
 {
 	/**
-	 * Return collection of taxonomies related to the taxed model
+	 * Return a collection of taxonomies related to the taxed model.
+	 *
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
 	 */
 	public function taxed()
@@ -21,6 +22,8 @@ trait HasTaxonomies
 	}
 
 	/**
+	 * Return a collection of taxonomies related to the taxed model.
+	 *
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
 	 */
 	public function taxonomies()
@@ -29,6 +32,8 @@ trait HasTaxonomies
 	}
 
 	/**
+	 * Add one or multiple terms in a given taxonomy.
+	 *
 	 * @param mixed    $terms
 	 * @param string   $taxonomy
 	 * @param integer  $parent
@@ -58,6 +63,8 @@ trait HasTaxonomies
 	}
 
 	/**
+	 * Convenience method for attaching this models taxonomies to the given parent taxonomy.
+	 *
 	 * @param  integer  $taxonomy_id
 	 */
 	public function setCategory($taxonomy_id)
@@ -66,6 +73,8 @@ trait HasTaxonomies
 	}
 
 	/**
+	 * Create terms and taxonomies (taxables).
+	 *
 	 * @param mixed    $terms
 	 * @param string   $taxonomy
 	 * @param integer  $parent
@@ -80,6 +89,8 @@ trait HasTaxonomies
 	}
 
 	/**
+	 * Pluck taxonomies by given field.
+	 *
 	 * @param  string  $by
 	 * @return mixed
 	 */
@@ -89,6 +100,8 @@ trait HasTaxonomies
 	}
 
 	/**
+	 * Pluck terms for a given taxonomy by name.
+	 *
 	 * @param  string  $taxonomy
 	 * @return mixed
 	 */
@@ -101,6 +114,8 @@ trait HasTaxonomies
 	}
 
 	/**
+	 * Get the terms related to a given taxonomy.
+	 *
      * @param  string  $taxonomy
 	 * @return mixed
 	 */
@@ -116,11 +131,13 @@ trait HasTaxonomies
 	}
 
 	/**
-	 * @param  string  $term
+	 * Get a term model by the given name and optionally a taxonomy.
+	 *
+	 * @param  string  $term_name
      * @param  string  $taxonomy
 	 * @return mixed
 	 */
-	public function getTerm($term, $taxonomy = '')
+	public function getTerm($term_name, $taxonomy = '')
 	{
         if ($taxonomy) {
 			$term_ids = $this->taxonomies->where('taxonomy', $taxonomy)->pluck('term_id');
@@ -128,41 +145,44 @@ trait HasTaxonomies
 			$term_ids = $this->getTaxonomies('term_id');
 		}
 
-		return Term::whereIn('id', $term_ids)->where('name', $term)->first();
+		return Term::whereIn('id', $term_ids)->where('name', $term_name)->first();
 	}
 
 	/**
-	 * @param  string  $term
+	 * Check if this model has a given term.
+	 *
+	 * @param  string  $term_name
 	 * @param  string  $taxonomy
 	 * @return boolean
 	 */
-	public function hasTerm( $term, $taxonomy = '' )
+	public function hasTerm($term_name, $taxonomy = '')
 	{
-		return (bool) $this->getTerm($term, $taxonomy);
+		return (bool) $this->getTerm($term_name, $taxonomy);
 	}
 
 	/**
-	 * @param  string  $term
+	 * Disassociate the given term from this model.
+	 *
+	 * @param  string  $term_name
 	 * @param  string  $taxonomy
 	 * @return mixed
 	 */
-	public function removeTerm($term, $taxonomy = '')
+	public function removeTerm($term_name, $taxonomy = '')
 	{
-		if ($term = $this->getTerm($term, $taxonomy)) {
-			if ( $taxonomy ) {
-				$taxonomy = $this->taxonomies->where('taxonomy', $taxonomy)->where('term_id', $term->id)->first();
-			} else {
-				$taxonomy = $this->taxonomies->where('term_id', $term->id)->first();
-			}
+		if (! $term = $this->getTerm($term_name, $taxonomy))
+			return null;
 
-			return $this->taxed()->where('taxonomy_id', $taxonomy->id)->delete();
+		if ($taxonomy) {
+			$taxonomy = $this->taxonomies->where('taxonomy', $taxonomy)->where('term_id', $term->id)->first();
+		} else {
+			$taxonomy = $this->taxonomies->where('term_id', $term->id)->first();
 		}
 
-		return null;
+		return $this->taxed()->where('taxonomy_id', $taxonomy->id)->delete();
 	}
 
 	/**
-	 * Remove all terms.
+	 * Disassociate all terms from this model.
 	 *
 	 * @return mixed
 	 */
@@ -172,14 +192,14 @@ trait HasTaxonomies
 	}
 
 	/**
-	 * Filter model to subset with the given tags.
+	 * Scope by given terms.
 	 *
 	 * @param  object  $query
 	 * @param  array   $terms
 	 * @param  string  $taxonomy
-	 * @return object  $query
+	 * @return mixed
 	 */
-	public function scopeWithTerms( $query, $terms, $taxonomy )
+	public function scopeWithTerms($query, $terms, $taxonomy)
 	{
 		$terms = TaxableUtils::makeTermsArray($terms);
 
@@ -190,42 +210,42 @@ trait HasTaxonomies
 	}
 
 	/**
-	 * Filter model to subset with the given tags.
+	 * Scope by the given term.
 	 *
 	 * @param  object  $query
-	 * @param  string  $term
+	 * @param  string  $term_name
 	 * @param  string  $taxonomy
 	 * @return mixed
 	 */
-	public function scopeWithTax($query, $term, $taxonomy)
+	public function scopeWithTerm($query, $term_name, $taxonomy)
 	{
 		$term_ids = Taxonomy::where('taxonomy', $taxonomy)->pluck('term_id');
 
-		$term = Term::whereIn('id', $term_ids)->where('name', '=', $term)->first();
-
-		$taxonomy = Taxonomy::where('term_id', $term->id)->first();
-
-		return $query->whereHas('taxed', function($q) use($term, $taxonomy) {
-			$q->where('taxonomy_id', $taxonomy->id);
-		});
-	}
-
-	/**
-	 * @param  object  $query
-	 * @param  string  $term
-	 * @param  string  $taxonomy
-	 * @return mixed
-	 */
-	public function scopeWithTerm($query, $term, $taxonomy)
-	{
-		$term_ids = Taxonomy::where('taxonomy', $taxonomy)->pluck('term_id');
-
-		$term = Term::whereIn('id', $term_ids)->where('name', '=', $term)->first();
-
+		$term     = Term::whereIn('id', $term_ids)->where('name', $term_name)->first();
 		$taxonomy = Taxonomy::where('term_id', $term->id)->first();
 
 		return $query->whereHas('taxonomies', function($q) use($term, $taxonomy) {
 			$q->where('term_id', $term->id);
+		});
+	}
+
+	/**
+	 * Scope by given taxonomy.
+	 *
+	 * @param  object  $query
+	 * @param  string  $term_name
+	 * @param  string  $taxonomy
+	 * @return mixed
+	 */
+	public function scopeWithTax($query, $term_name, $taxonomy)
+	{
+		$term_ids = Taxonomy::where('taxonomy', $taxonomy)->pluck('term_id');
+
+		$term     = Term::whereIn('id', $term_ids)->where('name', $term_name)->first();
+		$taxonomy = Taxonomy::where('term_id', $term->id)->first();
+
+		return $query->whereHas('taxed', function($q) use($term, $taxonomy) {
+			$q->where('taxonomy_id', $taxonomy->id);
 		});
 	}
 
@@ -236,7 +256,8 @@ trait HasTaxonomies
 	 * @param  integer  $taxonomy_id
 	 * @return mixed
 	 */
-	public function scopeHasCategory($query, $taxonomy_id) {
+	public function scopeHasCategory($query, $taxonomy_id)
+	{
 		return $query->whereHas('taxed', function($q) use($taxonomy_id) {
 			$q->where('taxonomy_id', $taxonomy_id);
 		});
