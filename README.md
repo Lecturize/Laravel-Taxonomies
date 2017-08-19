@@ -49,6 +49,22 @@ $ php artisan migrate
 
 ## Usage
 
+First, add our `HasTaxonomies` trait to your model.
+        
+```php
+<?php namespace App\Models;
+
+use Lecturize\Taxonomies\Traits\HasTaxonomies;
+
+class Post extends Model
+{
+    use HasTaxonomies;
+
+    // ...
+}
+?>
+```
+
 ##### Add a Term
 ```php
 $model->addTerm('My Category', 'taxonomy')
