@@ -47,16 +47,6 @@ class Taxonomy extends Model
 	}
 
 	/**
-     * An example for a related posts model.
-	 *
-	 * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
-	 */
-	public function posts()
-	{
-		return $this->morphedByMany('App\Models\Posts\Post', 'taxable', 'taxables');
-	}
-
-	/**
 	 * Get the parent taxonomy.
 	 *
 	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -74,6 +64,16 @@ class Taxonomy extends Model
 	public function children()
 	{
 		return $this->hasMany(Taxonomy::class, 'parent');
+	}
+
+	/**
+     * An example for a related posts model.
+	 *
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+	 */
+	public function posts()
+	{
+		return $this->morphedByMany('App\Models\Posts\Post', 'taxable', 'taxables');
 	}
 
 	/**
