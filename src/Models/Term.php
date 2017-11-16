@@ -11,20 +11,20 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Term extends Model
 {
-     use Sluggable;
-     use SoftDeletes;
+    use Sluggable;
+    use SoftDeletes;
 
-     /**
-      * @inheritdoc
-      */
-     protected $fillable = [
-          'name',
-          'slug',
-     ];
+    /**
+     * @inheritdoc
+     */
+    protected $fillable = [
+        'name',
+        'slug',
+    ];
 
-     /**
-      * @inheritdoc
-      */
+    /**
+     * @inheritdoc
+     */
     protected $dates = ['deleted_at'];
 
     /**
@@ -49,47 +49,47 @@ class Term extends Model
         ];
     }
 
-     /**
-      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
-      */
-     public function taxable() {
-          return $this->morphMany(Taxable::class, 'taxable');
-     }
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function taxable() {
+        return $this->morphMany(Taxable::class, 'taxable');
+    }
 
-     /**
-      * Get the taxonomies this term belongs to.
-      *
-      * @return \Illuminate\Database\Eloquent\Relations\HasMany
-      */
-     public function taxonomies() {
-          return $this->hasMany(Taxonomy::class);
-     }
+    /**
+     * Get the taxonomies this term belongs to.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function taxonomies() {
+        return $this->hasMany(Taxonomy::class);
+    }
 
-     /**
-      * Get display name.
-      *
-      * @param  string  $locale
-      * @param  int     $limit
-      * @return mixed
-      */
-     public function getDisplayName($locale = '', $limit = 0)
-     {
-          $locale = $locale ?: app()->getLocale();
+    /**
+     * Get display name.
+     *
+     * @param  string  $locale
+     * @param  int     $limit
+     * @return mixed
+     */
+    public function getDisplayName($locale = '', $limit = 0)
+    {
+        $locale = $locale ?: app()->getLocale();
 
-          $property_with_locale = $locale === 'en' ? "name" : "name_$locale";
+        $property_with_locale = $locale === 'en' ? "name" : "name_$locale";
 
-          $name = property_exists($this, $property_with_locale) ? $this->{$property_with_locale} : $this->name;
+        $name = property_exists($this, $property_with_locale) ? $this->{$property_with_locale} : $this->name;
 
-          return $limit > 0 ? str_limit($name, $limit) : $name;
-     }
+        return $limit > 0 ? str_limit($name, $limit) : $name;
+    }
 
-     /**
-      * Get route parameters.
-      *
+    /**
+     * Get route parameters.
+     *
      * @param  string  $taxonomy
-      * @return mixed
-      */
-     public function getRouteParameters($taxonomy)
+     * @return mixed
+     */
+    public function getRouteParameters($taxonomy)
     {
         $taxonomy = Taxonomy::taxonomy($taxonomy)
                             ->term($this->name)
@@ -101,7 +101,7 @@ class Term extends Model
         array_push($parameters, $taxonomy->taxonomy);
 
         return array_reverse($parameters);
-     }
+    }
 
     /**
      * Get slugs of parent terms.
