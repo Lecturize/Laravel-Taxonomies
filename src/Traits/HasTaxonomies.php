@@ -262,4 +262,18 @@ trait HasTaxonomies
             $q->where('taxonomy_id', $taxonomy_id);
         });
     }
+
+    /**
+     * Scope by category ids.
+     *
+     * @param  object  $query
+     * @param  array   $taxonomy_ids
+     * @return mixed
+     */
+    public function scopeHasCategories($query, $taxonomy_ids)
+    {
+        return $query->whereHas('taxed', function($q) use($taxonomy_ids) {
+            $q->whereIn('taxonomy_id', $taxonomy_ids);
+        });
+    }
 }
