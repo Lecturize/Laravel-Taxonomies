@@ -20,9 +20,9 @@ class Taxable extends Model
     /**
      * @inheritdoc
      */
-    public function __construct()
+    public function __construct(array $attributes = [])
     {
-        parent::__construct();
+        parent::__construct($attributes);
 
         $this->table = config('lecturize.taxonomies.table_pivot','taxables');
     }
