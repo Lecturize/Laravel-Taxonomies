@@ -45,15 +45,15 @@ trait HasTaxonomies
 
         $this->createTaxables($terms, $taxonomy, $parent, $order);
 
-        $terms = Term::whereIn('name', $terms)->pluck('id')->all();
+        $taxonomies = Taxonomy::leftJoin('terms', 'taxonomies.term_id', '=', 'terms.id')
+            ->where('terms.name', $terms)
+            ->where('taxonomies.taxonomy', $taxonomy)
+            ->whereNotIn('taxonomies.id', $this->taxonomies()->pluck('id'))
+            ->pluck('taxonomies.id')->all();
 
-        if (count($terms) > 0) {
-            foreach ($terms as $term) {
-                if ($this->taxonomies()->where('taxonomy', $taxonomy)->where('term_id', $term)->first())
-                    continue;
-
-                $tax = Taxonomy::where('term_id', $term)->first();
-                $this->taxonomies()->attach($tax->id);
+        if (count($taxonomies) > 0) {
+            foreach ($taxonomies as $taxonomy) {
+                $this->taxonomies()->attach($taxonomy);
             }
 
             return;
