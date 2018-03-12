@@ -126,7 +126,7 @@ $post->addTerm('My First Category', 'category');
 $post->addTerm(['Category Two', 'Category Three'], 'category');
 ```
 
-First fo all, this snippet will create three entries in your `terms` table, if they don't already exist:
+First of all, this snippet will create three entries in your `terms` table, if they don't already exist:
 
 * My First Category
 * Category Two
