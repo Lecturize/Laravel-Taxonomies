@@ -47,6 +47,68 @@ This will create a `config/sluggable.php`, a `config/lecturize.php` and a migrat
 $ php artisan migrate
 ```
 
+#### customize Models
+
+If you want to use your own models you can define them in the published configuration file. 
+
+```php
+/*
+ * Terms model
+ */
+'model_term' => App\Models\Term::class,
+
+/*
+ * Taxonomies model
+ */
+'model_taxonomy' => App\Models\Taxonomy::class,
+
+/*
+ * Relationship model
+ */
+'model_pivot' => App\Models\Taxable::class,
+```
+
+At best, these models inherit from the originals.
+
+```php
+<?php
+
+namespace App\Models;
+
+use Lecturize\Taxonomies\Models\Term as BaseTerm;
+
+class Term extends BaseTerm
+{
+    //
+}
+```
+
+```php
+<?php
+
+namespace App\Models;
+
+use Lecturize\Taxonomies\Models\Taxonomy as BaseTaxonomy;
+
+class Taxonomy extends BaseTaxonomy
+{
+    //
+}
+```
+
+```php
+<?php
+
+namespace App\Models;
+
+use Lecturize\Taxonomies\Models\Taxable as BaseTaxable;
+
+class Taxable extends BaseTaxable
+{
+    //
+}
+```
+
 ## Usage
 
 First, add our `HasTaxonomies` trait to your model.
