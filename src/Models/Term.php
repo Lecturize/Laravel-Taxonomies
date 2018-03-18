@@ -53,7 +53,10 @@ class Term extends Model
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
     public function taxable() {
-        return $this->morphMany(Taxable::class, 'taxable');
+        return $this->morphMany(
+            config('lecturize.taxonomies.model_pivot', Taxable::class),
+            'taxable'
+        );
     }
 
     /**
@@ -62,7 +65,9 @@ class Term extends Model
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function taxonomies() {
-        return $this->hasMany(Taxonomy::class);
+        return $this->hasMany(
+            config('lecturize.taxonomies.model_taxonomy', Taxonomy::class)
+        );
     }
 
     /**

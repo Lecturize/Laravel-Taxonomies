@@ -43,7 +43,9 @@ class Taxonomy extends Model
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function term() {
-        return $this->belongsTo(Term::class);
+        return $this->belongsTo(
+            config('lecturize.taxonomies.model_term', Term::class)
+        );
     }
 
     /**
@@ -53,7 +55,10 @@ class Taxonomy extends Model
      */
     public function parent()
     {
-        return $this->belongsTo(Taxonomy::class, 'parent');
+        return $this->belongsTo(
+            config('lecturize.taxonomies.model_taxonomy', Taxonomy::class),
+            'parent'
+        );
     }
 
     /**
@@ -63,7 +68,10 @@ class Taxonomy extends Model
      */
     public function children()
     {
-        return $this->hasMany(Taxonomy::class, 'parent');
+        return $this->hasMany(
+            config('lecturize.taxonomies.model_taxonomy', Taxonomy::class),
+            'parent'
+        );
     }
 
     /**

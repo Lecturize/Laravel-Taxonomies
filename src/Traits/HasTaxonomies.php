@@ -18,7 +18,10 @@ trait HasTaxonomies
      */
     public function taxed()
     {
-        return $this->morphMany(Taxable::class, 'taxable');
+        return $this->morphMany(
+            config('lecturize.taxonomies.model_pivot', Taxable::class),
+            'taxable'
+        );
     }
 
     /**
@@ -28,7 +31,10 @@ trait HasTaxonomies
      */
     public function taxonomies()
     {
-        return $this->morphToMany(Taxonomy::class, 'taxable');
+        return $this->morphToMany(
+            config('lecturize.taxonomies.model_taxonomy', Taxonomy::class),
+            'taxable'
+        );
     }
 
     /**
