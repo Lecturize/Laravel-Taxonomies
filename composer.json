@@ -23,7 +23,7 @@
         "php"                 : ">=7.2",
         "illuminate/support"  : ">=6.0",
         "illuminate/database" : ">=6.0",
-        "cviebrock/eloquent-sluggable" : "^8.0"
+        "cviebrock/eloquent-sluggable" : "^6.0"
     },
     "require-dev": {
         "laravel/framework" : ">=6.0",
