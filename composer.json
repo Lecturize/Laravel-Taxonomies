@@ -3,6 +3,7 @@
     "description": "Simple, nestable Terms & Taxonomies (similar to WordPress) for Laravel 5.",
     "homepage" : "https://github.com/Lecturize/Laravel-Taxonomies",
     "license": "MIT",
+    "type": "library",
     "keywords": [
         "taxonomies",
         "terms",
@@ -26,17 +27,39 @@
         "cviebrock/eloquent-sluggable" : "^6.0"
     },
     "require-dev": {
-        "laravel/framework" : ">=6.0",
-        "mockery/mockery" : "0.9.*",
-        "phpunit/phpunit" : "^9.4",
-        "doctrine/dbal"   : "2.5.x"
+        "laravel/framework"      : "^6.0",
+        "mockery/mockery"        : "~1.0",
+        "phpunit/phpunit"        : "^9.4",
+        "orchestra/testbench"    : "^4.10",
+        "doctrine/dbal"          : "^2.12"
     },
     "autoload": {
         "psr-4": {
-            "Lecturize\\Taxonomies\\" : "src/"
+            "Lecturize\\Taxonomies\\" : "src"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Lecturize\\Taxonomies\\Test\\": "tests"
+        }
+    },
+    "scripts": {
+        "taxonomies": "vendor/bin/phpunit",
+        "taxonomies-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    },
     "extra": {
+        "laravel": {
+            "providers": [
+                "Lecturize\\Taxonomies\\TaxonomiesServiceProvider"
+            ],
+            "aliases": {
+                "Taxonomy": "Lecturize\\Taxonomies\\Facades\\Taxonomy"
+            }
+        },
         "branch-alias" : {
             "dev-master" : "0.0.x-dev"
         }
