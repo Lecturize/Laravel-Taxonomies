@@ -32,6 +32,24 @@ trait HasTaxonomies
     }
 
     /**
+     * Convenience method to set Categories.
+     *
+     * @param string   $terms
+     * @param string   $taxonomy
+     */
+    public function setCategories($terms, $taxonomy)
+    {
+        $terms = explode('|', $terms);
+        $terms = Term::whereIn('slug', $terms)->pluck('id')->all();
+
+        if (count($terms) > 0)
+            foreach ($terms as $term) {
+                if ($taxonomy = Taxonomy::where('taxonomy', $taxonomy)->where('term_id', $term)->first())
+                    $this->setCategory($taxonomy->id);
+            }
+    }
+
+    /**
      * Add one or multiple terms in a given taxonomy.
      *
      * @param mixed    $terms
@@ -134,7 +152,7 @@ trait HasTaxonomies
      * Get a term model by the given name and optionally a taxonomy.
      *
      * @param  string  $term_name
-    * @param  string  $taxonomy
+     * @param  string  $taxonomy
      * @return mixed
      */
     public function getTerm($term_name, $taxonomy = '')
