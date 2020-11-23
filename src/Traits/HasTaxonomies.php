@@ -32,10 +32,10 @@ trait HasTaxonomies
     }
 
     /**
-     * Convenience method to set Categories.
+     * Convenience method to set categories.
      *
-     * @param string   $terms
-     * @param string   $taxonomy
+     * @param string  $terms
+     * @param string  $taxonomy
      */
     public function setCategories($terms, $taxonomy)
     {
@@ -45,8 +45,42 @@ trait HasTaxonomies
         if (count($terms) > 0)
             foreach ($terms as $term) {
                 if ($taxonomy = Taxonomy::where('taxonomy', $taxonomy)->where('term_id', $term)->first())
-                    $this->setCategory($taxonomy->id);
+                    $this->attachTaxonomy($taxonomy->id);
             }
+    }
+
+    /**
+     * Convenience method to synch categories.
+     *
+     * @param string  $terms
+     * @param string  $taxonomy
+     */
+    public function synchCategories($terms, $taxonomy)
+    {
+        $this->dissasociateAllCategories();
+        $this->setCategories($terms, $taxonomy);
+    }
+
+    /**
+     * Convenience method for attaching a given taxonomy to this model.
+     *
+     * @param  integer  $taxonomy_id
+     */
+    public function attachTaxonomy($taxonomy_id)
+    {
+        if (! $this->taxonomies()->whereId($taxonomy_id)->first())
+            $this->taxonomies()->attach($taxonomy_id);
+    }
+
+    /**
+     * Convenience method for detaching a given taxonomy to this model.
+     *
+     * @param  integer  $taxonomy_id
+     */
+    public function detachTaxonomy($taxonomy_id)
+    {
+        if ($this->taxonomies()->whereId($taxonomy_id)->first())
+            $this->taxonomies()->detach($taxonomy_id);
     }
 
     /**
@@ -87,7 +121,8 @@ trait HasTaxonomies
      */
     public function setCategory($taxonomy_id)
     {
-        $this->taxonomies()->attach($taxonomy_id);
+        if (! $this->taxonomies()->whereId($taxonomy_id)->first())
+            $this->taxonomies()->attach($taxonomy_id);
     }
 
     /**
@@ -201,10 +236,21 @@ trait HasTaxonomies
 
     /**
      * Disassociate all terms from this model.
+     * @deprecated Use dissasociateAllCategories() instead.
      *
      * @return mixed
      */
     public function removeAllTerms()
+    {
+        return $this->dissasociateAllCategories();
+    }
+
+    /**
+     * Disassociate all categrories (associated terms via taxable table) from this model.
+     *
+     * @return mixed
+     */
+    public function dissasociateAllCategories()
     {
         return $this->taxed()->delete();
     }
