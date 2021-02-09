@@ -126,15 +126,17 @@ class Taxonomy extends Model
     /**
      * Scope terms (category title) by given taxonomy.
      *
-     * @param  object  $query
-     * @param  string  $term
-     * @param  string  $taxonomy
+     * @param  object      $query
+     * @param  string|int  $term
+     * @param  string      $term_field
      * @return mixed
      */
-    public function scopeTerm($query, $term, $taxonomy)
+    public function scopeTerm($query, $term, $term_field = 'title')
     {
-        return $query->whereHas('term', function($q) use($term, $taxonomy) {
-            $q->where('title', $term);
+        $term_field = ! in_array($term_field, ['id', 'title', 'slug']) ? 'title' : $term_field;
+
+        return $query->whereHas('term', function($q) use($term, $term_field) {
+            $q->where($term_field, $term);
         });
     }
 
