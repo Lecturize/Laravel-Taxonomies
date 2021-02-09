@@ -1,11 +1,10 @@
 <?php namespace Lecturize\Taxonomies\Contracts;
 
 /**
- * Interface TaxableInterface
- * @deprecated Use CanHaveCategories interface instead.
+ * Interface CanHaveCategories
  * @package Lecturize\Taxonomies\Contracts
  */
-interface TaxableInterface
+interface CanHaveCategories
 {
     /** @return mixed */
     public function taxonomies();
