@@ -12,22 +12,22 @@ class CreateTaxonomiesTable extends Migration
     /**
      * Table names.
      *
-     * @var string  $table_terms       The terms table name.
-     * @var string  $table_taxonomies  The taxonomies table name.
-     * @var string  $table_pivot       The pivot table name.
+     * @var string  $terms       The terms table name.
+     * @var string  $taxonomies  The taxonomies table name.
+     * @var string  $pivot       The pivot table name.
      */
-    protected $table_terms;
-    protected $table_taxonomies;
-    protected $table_pivot;
+    protected $terms;
+    protected $taxonomies;
+    protected $pivot;
 
     /**
      * Create a new migration instance.
      */
     public function __construct()
     {
-        $this->table_terms      = config('lecturize.taxonomies.table_terms',      'terms');
-        $this->table_taxonomies = config('lecturize.taxonomies.table_taxonomies', 'taxonomies');
-        $this->table_pivot      = config('lecturize.taxonomies.table_pivot',      'taxables');
+        $this->terms      = config('lecturize.taxonomies.terms.table',      config('lecturize.taxonomies.terms_table',      'terms'));
+        $this->taxonomies = config('lecturize.taxonomies.taxonomies.table', config('lecturize.taxonomies.taxonomies_table', 'taxonomies'));
+        $this->pivot      = config('lecturize.taxonomies.pivot.table',      config('lecturize.taxonomies.pivot_table',      'taxables'));
     }
 
     /**
@@ -37,7 +37,7 @@ class CreateTaxonomiesTable extends Migration
      */
     public function up()
     {
-        Schema::create($this->table_terms, function(Blueprint $table)
+        Schema::create($this->terms, function(Blueprint $table)
         {
             $table->increments('id');
 
@@ -48,7 +48,7 @@ class CreateTaxonomiesTable extends Migration
             $table->softDeletes();
         });
 
-        Schema::create($this->table_taxonomies, function(Blueprint $table)
+        Schema::create($this->taxonomies, function(Blueprint $table)
         {
              $table->increments('id');
 
@@ -56,7 +56,7 @@ class CreateTaxonomiesTable extends Migration
                   ->nullable()
                   ->unsigned()
                   ->references('id')
-                  ->on($this->table_terms)
+                  ->on($this->terms)
                   ->onDelete('cascade');
 
             $table->string('taxonomy')->default('default');
@@ -72,13 +72,13 @@ class CreateTaxonomiesTable extends Migration
              $table->unique(['term_id', 'taxonomy']);
         });
 
-        Schema::create($this->table_pivot, function(Blueprint $table)
+        Schema::create($this->pivot, function(Blueprint $table)
         {
             $table->integer('taxonomy_id')
                   ->nullable()
                   ->unsigned()
                   ->references('id')
-                  ->on($this->table_taxonomies);
+                  ->on($this->taxonomies);
 
             $table->nullableMorphs('taxable');
         });
@@ -91,8 +91,8 @@ class CreateTaxonomiesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists($this->table_pivot);
-        Schema::dropIfExists($this->table_taxonomies);
-        Schema::dropIfExists($this->table_terms);
+        Schema::dropIfExists($this->pivot);
+        Schema::dropIfExists($this->taxonomies);
+        Schema::dropIfExists($this->terms);
     }
 }

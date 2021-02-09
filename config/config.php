@@ -1,22 +1,36 @@
 <?php
 return [
-    /*
+    /**
      * Taxonomies
      */
     'taxonomies' => [
-        /*
-         * Terms table
-         */
-        'table_terms' => 'terms',
 
-        /*
-         * Taxonomies table
+        /**
+         * Terms.
          */
-        'table_taxonomies' => 'taxonomies',
 
-        /*
-         * Relationship table
+        'terms' => [
+            'table' => 'terms',
+            'model' => \Lecturize\Taxonomies\Models\Term::class,
+        ],
+
+        /**
+         * Taxonomies.
          */
-        'table_pivot' => 'taxables',
+
+        'taxonomies' => [
+            'table' => 'taxonomies',
+            'model' => \Lecturize\Taxonomies\Models\Taxonomy::class,
+        ],
+
+        /**
+         * The "Taxable" pivot.
+         */
+
+        'pivot' => [
+            'table' => 'taxables',
+            'model' => \Lecturize\Taxonomies\Models\Taxable::class,
+        ],
+
     ],
 ];
