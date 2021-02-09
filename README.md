@@ -35,16 +35,17 @@ For migrations to be properly published ensure that you have added the directory
 
 ## Usage
 
-First, add our `HasTaxonomies` trait to your model.
+First, add our `HasCategories` trait to your model.
         
 ```php
 <?php namespace App\Models;
 
-use Lecturize\Taxonomies\Traits\HasTaxonomies;
+use Lecturize\Taxonomies\Contracts\CanHaveCategories;
+use Lecturize\Taxonomies\Traits\HasCategories;
 
-class Post extends Model
+class Post extends Model implements CanHaveCategories
 {
-    use HasTaxonomies;
+    use HasCategories;
 
     // ...
 }
@@ -53,52 +54,52 @@ class Post extends Model
 
 ##### Add a Term
 ```php
-$model->addTerm('My Category', 'taxonomy')
+$model->addCategory('My Category', 'blog_category')
 ```
 
 ##### Add multiple Terms
 ```php
-$model->addTerm(['Add','Multiple','Categories'], 'taxonomy')
+$model->addCategories(['Add','Multiple','Categories'], 'blog_category')
 ```
 
-##### Add a Term with optional parent (taxonomy) & order
+##### Add a Term with optional parent_id (taxonomy->id) & sort order
 ```php
-$model->addTerm('My Category', 'taxonomy', 1, 2)
+$model->addCategory('My Category', 'blog_category', 1, 2)
 ```
 
 ##### Get all Terms for a model by taxonomy
 ```php
-$model->getTerms('taxonomy')
+$model->getCategories('taxonomy')
 ```
 
 ##### Get a specific Term for a model by (optional) taxonomy
 ```php
-$model->getTerm('My Category', 'taxonomy')
+$model->getCategory('My Category', 'blog_category')
 ```
 
-##### Convenience method for getTerm()
+##### See if model has a given category within given taxonomy
 ```php
-$model->hasTerm($term, 'taxonomy')
+$model->hasCategory('My Category', 'blog_category')
 ```
 
 ##### Remove a Term from model by (optional) taxonomy
 ```php
-$model->removeTerm($term, 'taxonomy')
+$model->removeCategory('My Category', 'blog_category')
 ```
 
-##### Remove all Terms from model
+##### Remove (detach) all categories relations from model
 ```php
-$model->removeAllTerms()
+$model->detachCategories()
 ```
 
-##### Scope models with multiple Terms
+##### Scope models with any of the given categories
 ```php
-$model = Model::withTerms($terms, 'taxonomy')->get();
+$model = Model::categorizedIn(['Add','Multiple','Categories'], 'blog_category')->get();
 ```
 
-##### Scope models with one Term
+##### Scope models with one category
 ```php
-$model = Model::withTerm($term, 'taxonomy')->get();
+$model = Model::categorized('My Category', 'blog_category')->get();
 ```
 
 ## Example
@@ -108,8 +109,8 @@ $model = Model::withTerm($term, 'taxonomy')->get();
 ```php
 $post = Post::find(1);
 
-$post->addTerm('My First Category', 'category');
-$post->addTerm(['Category Two', 'Category Three'], 'category');
+$post->addCategory('My First Category', 'blog_category');
+$post->addCategories(['Category Two', 'Category Three'], 'blog_category');
 ```
 
 First fo all, this snippet will create three entries in your `terms` table, if they don't already exist:
@@ -124,7 +125,7 @@ And last it will relate the entries from your `taxonomies` table with your model
 
 **Why three tables?**
 
-Imagine you have a Taxonomy called *post_cat* and another one *product_cat*, the first categorises your blog posts, the second the products in your online shop. Now you add a product to a category (a *term*) called *Shoes* using `$product->addTerm('Shoes', 'product_cat');`. Afterwards you want to blog about that product and add that post to a *post_cat* called *Shoes* as well, using `$product->addTerm('Shoes', 'post_cat');`.
+Imagine you have a Taxonomy called *post_cat* and another one *product_cat*, the first categorises your blog posts, the second the products in your online shop. Now you add a product to a category (a *term*) called *Shoes* using `$product->addCategory('Shoes', 'product_cat');`. Afterwards you want to blog about that product and add that post to a *post_cat* called *Shoes* as well, using `$product->addCategory('Shoes', 'post_cat');`.
 
 Normally you would have two entries now in your database, one like `['Shoes','product_cat']` and another `['Shoes','post_at']`. Oops, now you recognize you misspelled *Shoes*, now you would have to change it twice, for each Taxonomy.
 
@@ -132,7 +133,7 @@ So I wanted to keep my *Terms* unique throughout my app, which is why I separate
 
 ## Changelog
 
-- [2021-02-09] **v1.0** Extended the database tables to support UUIDs (be sure to generate some on your existing models) and better customization.
+- [2021-02-09] **v1.0** Extended the database tables to support UUIDs (be sure to generate some on your existing models) and better customization. Quite some breaking changes throughout the whole package.
 
 ## License
 
