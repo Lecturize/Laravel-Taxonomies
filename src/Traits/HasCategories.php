@@ -38,24 +38,6 @@ trait HasCategories
     }
 
     /**
-     * Convenience method to set categories.
-     *
-     * @param string  $terms
-     * @param string  $taxonomy
-     */
-    public function setCategories($terms, $taxonomy)
-    {
-        $terms = explode('|', $terms);
-        $terms = Term::whereIn('slug', $terms)->pluck('id')->all();
-
-        if (count($terms) > 0)
-            foreach ($terms as $term) {
-                if ($taxonomy = Taxonomy::where('taxonomy', $taxonomy)->where('term_id', $term)->first())
-                    $this->attachTaxonomy($taxonomy->id);
-            }
-    }
-
-    /**
      * Convenience method to synch categories.
      *
      * @param string  $terms
@@ -90,33 +72,33 @@ trait HasCategories
     }
 
     /**
+     * Convenience method to set categories.
+     *
+     * @param string  $categories
+     * @param string  $taxonomy
+     */
+    public function setCategories($categories, $taxonomy)
+    {
+        $this->detachCategories();
+        $this->addCategories($categories, $taxonomy);
+    }
+
+    /**
      * Add one or multiple terms (categories) within a given taxonomy.
      *
-     * @param  string|array  $terms
+     * @param  string|array  $categories
      * @param  string        $taxonomy
-     * @param  integer       $parent_id
-     * @param  integer       $order
+     * @param  Taxonomy      $parent
+     * @param  int           $sort
      * @return $this
      */
-    public function addCategories($terms, $taxonomy, $parent_id = null, $order = null)
+    public function addCategories($categories, $taxonomy, $parent = null, $sort = null)
     {
-        $terms = TaxableUtils::makeTermsArray($terms);
+        $taxonomies = \Lecturize\Taxonomies\Facades\Taxonomy::createCategories($categories, $taxonomy, $parent);
 
-        $this->createTaxables($terms, $taxonomy, $parent_id, $order);
-
-        $terms = Term::whereIn('title', $terms)->pluck('id')->all();
-
-        if (count($terms) > 0) {
-            foreach ($terms as $term) {
-                if ($this->taxonomies()->where('taxonomy', $taxonomy)->where('term_id', $term)->first())
-                    continue;
-
-                $tax = Taxonomy::where('term_id', $term)->first();
-                $this->taxonomies()->attach($tax->id);
-            }
-        } else {
-            $this->taxonomies()->detach();
-        }
+        if (count($taxonomies) > 0)
+            foreach ($taxonomies as $taxonomy)
+                $this->taxonomies()->attach($taxonomy->id);
 
         return $this;
     }
@@ -126,13 +108,13 @@ trait HasCategories
      *
      * @param  string|array  $terms
      * @param  string        $taxonomy
-     * @param  integer       $parent_id
-     * @param  integer       $order
+     * @param  Taxonomy      $parent
+     * @param  int           $sort
      * @return $this
      */
-    public function addCategory($terms, $taxonomy, $parent_id = null, $order = null)
+    public function addCategory($terms, $taxonomy, $parent = null, $sort = null)
     {
-        return $this->addCategory($terms, $taxonomy, $parent_id, $order);
+        return $this->addCategories($terms, $taxonomy, $parent, $sort);
     }
 
     /**
@@ -141,29 +123,13 @@ trait HasCategories
      *
      * @param  string|array  $terms
      * @param  string        $taxonomy
-     * @param  integer       $parent_id
-     * @param  integer       $order
+     * @param  Taxonomy      $parent
+     * @param  int           $sort
      * @return $this
      */
-    public function addTerm($terms, $taxonomy, $parent_id = null, $order = null)
+    public function addTerm($terms, $taxonomy, $parent = null, $sort = null)
     {
-        return $this->addCategory($terms, $taxonomy, $parent_id, $order);
-    }
-
-    /**
-     * Create terms and taxonomies (taxables).
-     *
-     * @param mixed    $terms
-     * @param string   $taxonomy
-     * @param integer  $parent_id
-     * @param integer  $order
-     */
-    public function createTaxables($terms, $taxonomy, $parent_id = null, $order = null)
-    {
-        $terms = TaxableUtils::makeTermsArray($terms);
-
-        TaxableUtils::createTerms($terms);
-        TaxableUtils::createTaxonomies($terms, $taxonomy, $parent_id, $order);
+        return $this->addCategory($terms, $taxonomy, $parent, $sort);
     }
 
     /**
