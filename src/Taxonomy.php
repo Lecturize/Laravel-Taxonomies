@@ -51,20 +51,22 @@ class Taxonomy
                 $terms->push(Term::firstOrCreate(['title' => $category]));
 
         foreach ($terms as $term) {
-            $tax = TaxonomyModel::firstOrCreate([
+            $tax = TaxonomyModel::firstOrNew([
                 'term_id'  => $term->id,
                 'taxonomy' => $taxonomy,
             ]);
 
             if ($tax) {
                 if ($parent instanceof TaxonomyModel && $tax->parent_id !== $parent->id)
-                    $tax->parent()->associate($parent);
+                    $tax->parent_id = $parent->id;
 
                 if (is_integer($sort) && $tax->sort !== $sort)
-                    $tax->update(['sort' => $sort]);
-            }
+                    $tax->sort = $sort;
 
-            $taxonomies->push($tax);
+                $tax->save();
+
+                $taxonomies->push($tax);
+            }
         }
 
         return $taxonomies;

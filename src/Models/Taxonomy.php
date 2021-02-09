@@ -62,6 +62,16 @@ class Taxonomy extends Model
                       ->hasColumn($model->getTable(), 'uuid'))
                 $model->uuid = \Webpatser\Uuid\Uuid::generate()->string;
         });
+
+        static::saving(function ($model) {
+            if (isset($model->term) && $model->term->title && ! $model->description)
+                $model->description = $model->term->title;
+
+            if (! $model->sort) {
+                $sort = ($siblings = $model->siblings()->get()) ? $siblings->max('sort') : 0;
+                $model->sort = ($sort + 1);
+            }
+        });
     }
 
     /**
@@ -91,6 +101,19 @@ class Taxonomy extends Model
     public function children()
     {
         return $this->hasMany(config('lecturize.taxonomies.taxonomies.model', Taxonomy::class));
+    }
+
+    /**
+     * Get the children taxonomies (categories).
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function siblings()
+    {
+        $class = config('lecturize.taxonomies.taxonomies.model', Taxonomy::class);
+        return (new $class)->taxonomy($this->taxonomy)
+                           ->where('parent_id', $this->parent_id)
+                           ->orderBy('sort');
     }
 
     /**
