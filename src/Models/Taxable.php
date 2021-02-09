@@ -40,6 +40,10 @@ class Taxable extends Model
      */
     public function taxonomy()
     {
-        return $this->belongsTo(Taxonomy::class, 'taxonomy_id', 'id');
+        return $this->belongsTo(
+            config('lecturize.taxonomies.taxonomies.model', Taxonomy::class),
+            'taxonomy_id',
+            'id'
+        );
     }
 }

@@ -1,5 +1,6 @@
 <?php namespace Lecturize\Taxonomies\Traits;
 
+use Lecturize\Taxonomies\Models\Taxable;
 use Lecturize\Taxonomies\Models\Taxonomy;
 use Lecturize\Taxonomies\Models\Term;
 use Lecturize\Taxonomies\TaxableUtils;
@@ -17,7 +18,23 @@ trait HasCategories
      */
     public function taxonomies()
     {
-        return $this->morphToMany(Taxonomy::class, 'taxable');
+        return $this->morphToMany(
+            config('lecturize.taxonomies.taxonomies.model', Taxonomy::class),
+            'taxable'
+        );
+    }
+
+    /**
+     * Return a collection of taxonomies related to the taxed model.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function taxable()
+    {
+        return $this->morphMany(
+            config('lecturize.taxonomies.pivot.model', Taxable::class),
+            'taxable'
+        );
     }
 
     /**

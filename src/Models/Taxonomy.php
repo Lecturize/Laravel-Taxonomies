@@ -68,7 +68,7 @@ class Taxonomy extends Model
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function term() {
-        return $this->belongsTo(Term::class);
+        return $this->belongsTo(config('lecturize.taxonomies.terms.model', Term::class));
     }
 
     /**
@@ -78,7 +78,7 @@ class Taxonomy extends Model
      */
     public function parent()
     {
-        return $this->belongsTo(Taxonomy::class);
+        return $this->belongsTo(config('lecturize.taxonomies.taxonomies.model', Taxonomy::class));
     }
 
     /**
@@ -88,7 +88,7 @@ class Taxonomy extends Model
      */
     public function children()
     {
-        return $this->hasMany(Taxonomy::class);
+        return $this->hasMany(config('lecturize.taxonomies.taxonomies.model', Taxonomy::class));
     }
 
     /**

@@ -59,7 +59,7 @@ class Term extends Model
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function taxonomies() {
-        return $this->hasMany(Taxonomy::class);
+        return $this->hasMany(config('lecturize.taxonomies.taxonomies.model', Taxonomy::class));
     }
 
     /**
