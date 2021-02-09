@@ -21,8 +21,6 @@ class Taxonomy extends Model
         'content',
         'lead',
 
-        'order_by',
-        'order_direction',
         'sort',
 
         'properties',

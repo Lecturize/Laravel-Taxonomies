@@ -55,9 +55,6 @@ class ExtendTaxonomiesTables extends Migration
             $table->longText('content')->nullable()->after('desc');
             $table->text('lead')->nullable()->after('content');
 
-            $table->string('order_by')->nullable()->after('lead');
-            $table->string('order_direction')->nullable()->after('order_by');
-
             $table->json('properties')->nullable()->after('sort');
 
             $table->renameColumn('desc', 'description');
@@ -94,9 +91,6 @@ class ExtendTaxonomiesTables extends Migration
 
             $table->dropColumn('content');
             $table->dropColumn('lead');
-
-            $table->dropColumn('order_by');
-            $table->dropColumn('order_direction');
 
             $table->dropColumn('properties');
 
