@@ -4,13 +4,7 @@
 
 # Laravel Taxonomies
 
-Simple, nestable Terms & Taxonomies (similar to WordPress) for Laravel 5.
-
-## Important Notice
-
-**This package is a work in progress**, please use with care and feel free to report any issues or ideas you may have!
-
-We've transferred this package to a new owner and therefor updated the namespaces to **Lecturize\Taxonomies**. The config file is now `config/lecturize.php`.
+Simple, nestable Terms & Taxonomies (similar to WordPress) for Laravel.
 
 ## Installation
 
@@ -18,21 +12,11 @@ Require the package from your `composer.json` file
 
 ```php
 "require": {
-    "lecturize/laravel-taxonomies": "dev-master"
+    "lecturize/laravel-taxonomies": "^1.0"
 }
 ```
 
 and run `$ composer update` or both in one with `$ composer require lecturize/laravel-taxonomies`.
-
-Next register the service provider and (optional) facade to your `config/app.php` file
-
-```php
-'providers' => [
-    // ...
-    Cviebrock\EloquentSluggable\ServiceProvider::class,
-    Lecturize\Taxonomies\TaxonomiesServiceProvider::class,
-];
-```
 
 ## Configuration & Migration
 
@@ -41,11 +25,13 @@ $ php artisan vendor:publish --provider="Cviebrock\EloquentSluggable\ServiceProv
 $ php artisan vendor:publish --provider="Lecturize\Taxonomies\TaxonomiesServiceProvider"
 ```
 
-This will create a `config/sluggable.php`, a `config/lecturize.php` and a migration file, that you'll have to run like so:
+This will publish a `config/sluggable.php`, a `config/lecturize.php` and some migration files, that you'll have to run:
 
 ```bash
 $ php artisan migrate
 ```
+
+For migrations to be properly published ensure that you have added the directory `database/migrations` to the classmap in your projects `composer.json`.
 
 ## Usage
 
@@ -138,11 +124,15 @@ And last it will relate the entries from your `taxonomies` table with your model
 
 **Why three tables?**
 
-Imagine you have a Taxonomy called *post_cat* and another one *product_cat*, the first categorises your blog posts, the second the products in your online shop. Now you add a product to a category (a *term*) called *Shoes* using `$product->addTerm('Sheos', 'product_cat');`. Afterwards you want to blog about that product and add that post to a *post_cat* called *Shoes* as well, using `$product->addTerm('Sheos', 'post_cat');`.
+Imagine you have a Taxonomy called *post_cat* and another one *product_cat*, the first categorises your blog posts, the second the products in your online shop. Now you add a product to a category (a *term*) called *Shoes* using `$product->addTerm('Shoes', 'product_cat');`. Afterwards you want to blog about that product and add that post to a *post_cat* called *Shoes* as well, using `$product->addTerm('Shoes', 'post_cat');`.
 
-Normally you would have two entries now in your database, one like `['Sheos','product_cat']` and another `['Sheos','post_at']`. Oops, now you recognize you misspelled *Shoes*, now you would have to change it twice, for each Taxonomy.
+Normally you would have two entries now in your database, one like `['Shoes','product_cat']` and another `['Shoes','post_at']`. Oops, now you recognize you misspelled *Shoes*, now you would have to change it twice, for each Taxonomy.
 
 So I wanted to keep my *Terms* unique throughout my app, which is why I separated them from the Taxonomies and simply related them.
+
+## Changelog
+
+- [2021-02-09] **v1.0** Extended the database tables to support UUIDs (be sure to generate some on your existing models) and better customization.
 
 ## License
 
