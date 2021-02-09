@@ -1,9 +1,10 @@
 <?php namespace Lecturize\Taxonomies\Models;
 
-use Cviebrock\EloquentSluggable\Sluggable;
-
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
+
+use Cviebrock\EloquentSluggable\Sluggable;
 
 /**
  * Class Term
@@ -14,50 +15,46 @@ class Term extends Model
     use Sluggable;
     use SoftDeletes;
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     protected $fillable = [
-        'name',
+        'title',
         'slug',
+
+        'content',
+        'lead',
     ];
 
-    /**
-     * @inheritdoc
-     */
-    protected $dates = ['deleted_at'];
+    /** @inheritdoc */
+    protected $dates = [
+        'deleted_at'
+    ];
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
 
-        $this->table = config('lecturize.taxonomies.table_terms', 'terms');
+        $this->table = config('lecturize.taxonomies.terms.table', 'terms');
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function sluggable()
+    /** @inheritdoc */
+    protected static function boot()
     {
-        return [
-            'slug' => [
-                'source' => 'name'
-            ]
-        ];
+        static::creating(function ($model) {
+            if ($model->getConnection()
+                      ->getSchemaBuilder()
+                      ->hasColumn($model->getTable(), 'uuid'))
+                $model->uuid = \Webpatser\Uuid\Uuid::generate()->string;
+        });
+    }
+
+    /** @inheritdoc */
+    public function sluggable(): array {
+        return ['slug' => ['source' => 'title']];
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
-     */
-    public function taxable() {
-        return $this->morphMany(Taxable::class, 'taxable');
-    }
-
-    /**
-     * Get the taxonomies this term belongs to.
+     * Get the taxonomies (categories) this term belongs to.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -66,7 +63,19 @@ class Term extends Model
     }
 
     /**
-     * Get display name.
+     * Fallback attribute for the old column "name".
+     * @deprecated Use the title property instead.
+     *
+     * @return string
+     */
+    public function getNameAttribute()
+    {
+        return $this->title;
+    }
+
+    /**
+     * Fallback method for the old column "name".
+     * @deprecated Use getDisplayTitle($limit) instead.
      *
      * @param  string  $locale
      * @param  int     $limit
@@ -74,13 +83,18 @@ class Term extends Model
      */
     public function getDisplayName($locale = '', $limit = 0)
     {
-        $locale = $locale ?: app()->getLocale();
+        return $this->getDisplayTitle($limit);
+    }
 
-        $property_with_locale = $locale === 'en' ? "name" : "name_$locale";
-
-        $name = property_exists($this, $property_with_locale) ? $this->{$property_with_locale} : $this->name;
-
-        return $limit > 0 ? str_limit($name, $limit) : $name;
+    /**
+     * Get display title.
+     *
+     * @param  int     $limit
+     * @return mixed
+     */
+    public function getDisplayTitle($limit = 0)
+    {
+        return $limit > 0 ? Str::slug($this->title, $limit) : $this->title;
     }
 
     /**
@@ -92,7 +106,7 @@ class Term extends Model
     public function getRouteParameters($taxonomy)
     {
         $taxonomy = Taxonomy::taxonomy($taxonomy)
-                            ->term($this->name)
+                            ->term($this->title)
                             ->with('parent')
                             ->first();
 
@@ -114,7 +128,7 @@ class Term extends Model
     {
         array_push($parameters, $taxonomy->term->slug);
 
-        if (($parents = $taxonomy->parent()) && ($parent = $parents->first()))
+        if ($parent = $taxonomy->parent)
             return $this->getParentSlugs($parent, $parameters);
 
         return $parameters;

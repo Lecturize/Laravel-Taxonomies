@@ -8,26 +8,24 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Taxable extends Model
 {
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     protected $fillable = [
         'taxonomy_id',
         'taxable_id',
         'taxable_type'
     ];
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
 
-        $this->table = config('lecturize.taxonomies.table_pivot','taxables');
+        $this->table = config('lecturize.taxonomies.pivot.table','taxables');
     }
 
     /**
+     * The categorized model.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
     public function taxable()
@@ -36,6 +34,8 @@ class Taxable extends Model
     }
 
     /**
+     * The taxonomy.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function taxonomy()

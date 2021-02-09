@@ -11,34 +11,59 @@ class Taxonomy extends Model
 {
     use SoftDeletes;
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     protected $fillable = [
+        'parent_id',
         'term_id',
         'taxonomy',
-        'desc',
-        'parent',
+
+        'description',
+        'content',
+        'lead',
+
+        'order_by',
+        'order_direction',
         'sort',
+
+        'properties',
     ];
 
-    /**
-     * @inheritdoc
-     */
-    protected $dates = ['deleted_at'];
+    /** @inheritdoc */
+    protected $casts = [
+        'properties' => 'array',
+    ];
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
+    protected $dates = [
+        'deleted_at'
+    ];
+
+    /** @inheritdoc */
+    protected $with = [
+        'term'
+    ];
+
+    /** @inheritdoc */
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
 
-        $this->table = config('lecturize.taxonomies.table_taxonomies', 'taxonomies');
+        $this->table = config('lecturize.taxonomies.taxonomies.table', 'taxonomies');
+    }
+
+    /** @inheritdoc */
+    protected static function boot()
+    {
+        static::creating(function ($model) {
+            if ($model->getConnection()
+                      ->getSchemaBuilder()
+                      ->hasColumn($model->getTable(), 'uuid'))
+                $model->uuid = \Webpatser\Uuid\Uuid::generate()->string;
+        });
     }
 
     /**
-     * Get the term this taxonomy belongs to.
+     * Get the term, that will be displayed as this taxonomies (categories) title.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -47,37 +72,47 @@ class Taxonomy extends Model
     }
 
     /**
-     * Get the parent taxonomy.
+     * Get the parent taxonomy (categories).
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function parent()
     {
-        return $this->belongsTo(Taxonomy::class, 'parent');
+        return $this->belongsTo(Taxonomy::class);
     }
 
     /**
-     * Get the children taxonomies.
+     * Get the children taxonomies (categories).
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function children()
     {
-        return $this->hasMany(Taxonomy::class, 'parent');
+        return $this->hasMany(Taxonomy::class);
     }
 
     /**
-     * An example for a related posts model.
+     * An example for related posts.
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
     public function posts()
     {
-        return $this->morphedByMany('App\Models\Posts\Post', 'taxable', 'taxables');
+        return $this->morphedByMany(config('lecturize.community.posts.model', 'App\Models\Posts\Post'), 'taxable', 'taxables');
     }
 
     /**
-     * Scope taxonomies.
+     * An example for related products.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     */
+    public function products()
+    {
+        return $this->morphedByMany(config('lecturize.shop.products.model', 'Lecturize\Shop\Products\Product'), 'taxable', 'taxables');
+    }
+
+    /**
+     * Scope by a given taxonomy (e.g. "blog_cat" for blog posts or "shop_cat" for shop products).
      *
      * @param  object  $query
      * @param  string  $taxonomy
@@ -89,17 +124,17 @@ class Taxonomy extends Model
     }
 
     /**
-     * Scope terms.
+     * Scope terms (category title) by given taxonomy.
      *
      * @param  object  $query
      * @param  string  $term
      * @param  string  $taxonomy
      * @return mixed
      */
-    public function scopeTerm($query, $term, $taxonomy = 'major')
+    public function scopeTerm($query, $term, $taxonomy)
     {
         return $query->whereHas('term', function($q) use($term, $taxonomy) {
-            $q->where('name', $term);
+            $q->where('title', $term);
         });
     }
 
@@ -107,14 +142,14 @@ class Taxonomy extends Model
      * A simple search scope.
      *
      * @param  object  $query
-     * @param  string  $searchTerm
+     * @param  string  $term
      * @param  string  $taxonomy
      * @return mixed
      */
-    public function scopeSearch($query, $searchTerm, $taxonomy = 'major')
+    public function scopeSearch($query, $term, $taxonomy)
     {
-        return $query->whereHas('term', function($q) use($searchTerm, $taxonomy) {
-            $q->where('name', 'like', '%'. $searchTerm .'%');
+        return $query->whereHas('term', function($q) use($term, $taxonomy) {
+            $q->where('title', 'like', '%'. $term .'%');
         });
     }
 }
