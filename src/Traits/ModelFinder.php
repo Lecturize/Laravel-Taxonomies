@@ -15,7 +15,7 @@ trait ModelFinder
      * @param  string  $slug
      * @return Term
      */
-    public function findTerm(string $slug): Term
+    public function findTerm(string $slug)
     {
         return Term::whereSlug($slug)->first();
     }
@@ -27,7 +27,7 @@ trait ModelFinder
      * @param  string  $taxonomy
      * @return Taxonomy
      */
-    public function findTaxonomyByTerm(int $term_id, string $taxonomy): Taxonomy
+    public function findTaxonomyByTerm(int $term_id, string $taxonomy)
     {
         return $this->findCategory($term_id, $taxonomy, 'id');
     }
@@ -40,7 +40,7 @@ trait ModelFinder
      * @param  string      $term_field
      * @return Taxonomy
      */
-    public function findCategory($term, string $taxonomy, string $term_field = 'title'): Taxonomy
+    public function findCategory($term, string $taxonomy, string $term_field = 'title')
     {
         return Taxonomy::taxonomy($taxonomy)
                        ->term($term, $term_field)
