@@ -44,7 +44,8 @@ class Taxonomy
         if (is_string($categories))
             $categories = explode('|', $categories);
 
-        $terms = $taxonomies = collect();
+        $terms      = collect();
+        $taxonomies = collect();
 
         if (count($categories) > 0)
             foreach ($categories as $category)
