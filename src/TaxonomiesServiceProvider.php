@@ -20,7 +20,9 @@ class TaxonomiesServiceProvider extends ServiceProvider
     /** @inheritdoc */
      public function register()
      {
-         //
+         $this->app->singleton('taxonomies', function ($app) {
+             return new Taxonomy($app);
+         });
      }
 
     /** @inheritdoc */
