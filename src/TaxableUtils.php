@@ -10,74 +10,86 @@ use Lecturize\Taxonomies\Models\Term;
 class TaxableUtils
 {
     /**
-     * @param mixed    $terms
-     * @param string   $taxonomy
-     * @param integer  $parent_id
-     * @param integer  $order
+     * @param mixed   $terms
+     * @param string  $taxonomy
+     * @param int     $parent_id
+     * @param int     $sort
      */
-    public function createTaxables($terms, $taxonomy, $parent_id = null, $order = null)
-     {
-          $terms = $this->makeTermsArray($terms);
+    public function createCategoryItems($terms, $taxonomy, $parent_id = null, $sort = null)
+    {
+        $terms = $this->makeTermsArray($terms);
 
-          $this->createTerms($terms);
-          $this->createTaxonomies($terms, $taxonomy, $parent_id, $order);
-     }
+        $this->createTerms($terms);
+        $this->createTaxonomies($terms, $taxonomy, $parent_id, $sort);
+    }
+
+    /**
+     * @deprecated Use createCategoryItems() instead.
+     *
+     * @param mixed   $terms
+     * @param string  $taxonomy
+     * @param int     $parent_id
+     * @param int     $sort
+     */
+    public function createTaxables($terms, $taxonomy, $parent_id = null, $sort = null)
+    {
+        $this->createCategoryItems($terms, $taxonomy, $parent_id, $sort);
+    }
 
     /**
      * @param array $terms
      */
     public static function createTerms(array $terms)
-     {
-          if (count($terms) > 0) {
-               $found = Term::whereIn('title', $terms)->pluck('title')->all();
+    {
+        if (count($terms) > 0) {
+            $found = Term::whereIn('title', $terms)->pluck('title')->all();
 
-               if (! is_array($found))
-                    $found = [];
+            if (! is_array($found))
+                $found = [];
 
-               foreach (array_diff($terms, $found) as $title) {
-                    if (Term::where('title', $title)->first())
-                         continue;
+            foreach (array_diff($terms, $found) as $title) {
+                if (Term::where('title', $title)->first())
+                    continue;
 
-                    $term = new Term;
-                    $term->title = $title;
-                    $term->save();
-               }
-          }
-     }
+                $term = Term::create([
+                    'title' => $title,
+                ]);
+            }
+        }
+    }
 
     /**
      * @param array   $terms
      * @param string  $taxonomy
      * @param int     $parent_id
-     * @param int     $order
+     * @param int     $sort
      */
-    public static function createTaxonomies(array $terms, $taxonomy, $parent_id = null, $order = null)
-     {
-          if (count($terms) > 0) {
-               // only keep terms with existing entries in terms table
-               $terms = Term::whereIn('title', $terms)->pluck('title')->all();
+    public static function createTaxonomies(array $terms, $taxonomy, $parent_id = null, $sort = null)
+    {
+        if (count($terms) > 0) {
+            // only keep terms with existing entries in terms table
+            $terms = Term::whereIn('title', $terms)->get();
 
-               // create taxonomy entries for given terms
-               foreach ($terms as $term) {
-                    $term_id = Term::where('title', $term)->first()->id;
+            // create taxonomy entries for given terms
+            foreach ($terms as $term) {
+                if ($found = Taxonomy::taxonomy($taxonomy)->term($term->id, 'id')->where('parent_id', $parent_id)->first()) {
+                    if ($found->sort !== $sort)
+                        $found->update(['sort' => $sort]);
 
-                    if (Taxonomy::where('taxonomy', $taxonomy)->where('term_id', $term_id)->where('parent_id', $parent_id)->where('sort', $order)->first())
-                         continue;
+                    continue;
+                }
 
-                    $model = Taxonomy::create([
-                        'taxonomy' => $taxonomy,
-                        'term_id'  => $term_id,
-                        'sort'     => $order,
-                    ]);
+                $model = Taxonomy::create([
+                    'taxonomy' => $taxonomy,
+                    'term_id'  => $term->id,
+                    'sort'     => $sort,
+                ]);
 
-                    $model->save();
-
-                   if ($parent = Taxonomy::where('id', $parent_id)->first()) {
-                       $model->parent()->associate($parent);
-                   }
-               }
-          }
-     }
+                if ($parent = Taxonomy::where('id', $parent_id)->first())
+                    $model->parent()->associate($parent);
+            }
+        }
+    }
 
      /**
       * Return the given terms as an array.
