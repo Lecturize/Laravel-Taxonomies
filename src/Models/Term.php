@@ -40,6 +40,8 @@ class Term extends Model
     /** @inheritdoc */
     protected static function boot()
     {
+        parent::boot();
+
         static::creating(function ($model) {
             if ($model->getConnection()
                       ->getSchemaBuilder()
