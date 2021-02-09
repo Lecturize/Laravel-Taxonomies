@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Facade;
 /**
  * Class Taxonomy
  * @package Lecturize\Taxonomies\Facades
+ *
+ * @method \Illuminate\Support\Collection createCategories()
  */
 class Taxonomy extends Facade
 {
