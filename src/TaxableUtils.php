@@ -12,15 +12,15 @@ class TaxableUtils
     /**
      * @param mixed    $terms
      * @param string   $taxonomy
-     * @param integer  $parent
+     * @param integer  $parent_id
      * @param integer  $order
      */
-    public function createTaxables($terms, $taxonomy, $parent = 0, $order = 0)
+    public function createTaxables($terms, $taxonomy, $parent_id = null, $order = null)
      {
           $terms = $this->makeTermsArray($terms);
 
           $this->createTerms($terms);
-          $this->createTaxonomies($terms, $taxonomy, $parent, $order);
+          $this->createTaxonomies($terms, $taxonomy, $parent_id, $order);
      }
 
     /**
@@ -29,59 +29,66 @@ class TaxableUtils
     public static function createTerms(array $terms)
      {
           if (count($terms) > 0) {
-               $found = Term::whereIn('name', $terms)->pluck('name')->all();
+               $found = Term::whereIn('title', $terms)->pluck('title')->all();
 
                if (! is_array($found))
                     $found = [];
 
-               foreach (array_diff($terms, $found) as $name) {
-                    if (Term::where('name', $name)->first())
+               foreach (array_diff($terms, $found) as $title) {
+                    if (Term::where('title', $title)->first())
                          continue;
 
                     $term = new Term;
-                    $term->name = $name;
+                    $term->title = $title;
                     $term->save();
                }
           }
      }
 
     /**
-     * @param array    $terms
-     * @param string   $taxonomy
-     * @param integer  $parent
-     * @param integer  $order
+     * @param array   $terms
+     * @param string  $taxonomy
+     * @param int     $parent_id
+     * @param int     $order
      */
-    public static function createTaxonomies(array $terms, $taxonomy, $parent = 0, $order = 0)
+    public static function createTaxonomies(array $terms, $taxonomy, $parent_id = null, $order = null)
      {
           if (count($terms) > 0) {
                // only keep terms with existing entries in terms table
-               $terms = Term::whereIn('name', $terms)->pluck('name')->all();
+               $terms = Term::whereIn('title', $terms)->pluck('title')->all();
 
                // create taxonomy entries for given terms
                foreach ($terms as $term) {
-                    $term_id = Term::where('name', $term)->first()->id;
+                    $term_id = Term::where('title', $term)->first()->id;
 
-                    if (Taxonomy::where('taxonomy', $taxonomy)->where('term_id', $term_id)->where('parent', $parent)->where('sort', $order)->first())
+                    if (Taxonomy::where('taxonomy', $taxonomy)->where('term_id', $term_id)->where('parent_id', $parent_id)->where('sort', $order)->first())
                          continue;
 
-                    $model = new Taxonomy;
-                    $model->taxonomy = $taxonomy;
-                    $model->term_id  = $term_id;
-                    $model->parent   = $parent;
-                    $model->sort     = $order;
+                    $model = Taxonomy::create([
+                        'taxonomy' => $taxonomy,
+                        'term_id'  => $term_id,
+                        'sort'     => $order,
+                    ]);
+
                     $model->save();
+
+                   if ($parent = Taxonomy::where('id', $parent_id)->first()) {
+                       $model->parent()->associate($parent);
+                   }
                }
           }
      }
 
      /**
+      * Return the given terms as an array.
+      *
       * @param  string|array  $terms
       * @return array
       */
      public static function makeTermsArray($terms) {
           if (is_array($terms)) {
                return $terms;
-          } else if (is_string($terms)) {
+          } elseif (is_string($terms)) {
                return explode('|', $terms);
           }
 
