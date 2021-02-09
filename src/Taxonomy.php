@@ -33,13 +33,13 @@ class Taxonomy
     /**
      * Creates terms and taxonomies.
      *
-     * @param  string|array  $categories
-     * @param  string        $taxonomy
-     * @param  int           $parent_id
-     * @param  int           $sort
+     * @param  string|array   $categories
+     * @param  string         $taxonomy
+     * @param  TaxonomyModel  $parent
+     * @param  int            $sort
      * @return Collection
      */
-    public static function createCategories($categories, $taxonomy, $parent_id = null, $sort = null)
+    public static function createCategories($categories, $taxonomy, $parent = null, $sort = null)
     {
         if (is_string($categories))
             $categories = explode('|', $categories);
@@ -56,13 +56,11 @@ class Taxonomy
                 'taxonomy' => $taxonomy,
             ]);
 
-            $parent = TaxonomyModel::where('id', $parent_id)->first();
-
             if ($tax) {
-                if ($tax->parent_id !== $parent_id)
+                if ($parent instanceof TaxonomyModel && $tax->parent_id !== $parent->id)
                     $tax->parent()->associate($parent);
 
-                if ($tax->sort !== $sort)
+                if (is_integer($sort) && $tax->sort !== $sort)
                     $tax->update(['sort' => $sort]);
             }
 

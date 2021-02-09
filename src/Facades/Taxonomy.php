@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Facade;
  * Class Taxonomy
  * @package Lecturize\Taxonomies\Facades
  *
- * @method \Illuminate\Support\Collection createCategories()
+ * @method static \Illuminate\Support\Collection createCategories(string|array $categories, string $taxonomy, int $parent_id = null, int $sort = null)
  */
 class Taxonomy extends Facade
 {
