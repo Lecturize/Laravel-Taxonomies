@@ -1,12 +1,13 @@
 <?php namespace Lecturize\Taxonomies\Facades;
 
 use Illuminate\Support\Facades\Facade;
+use Lecturize\Taxonomies\Models\Taxonomy as TaxonomyModel;
 
 /**
  * Class Taxonomy
  * @package Lecturize\Taxonomies\Facades
  *
- * @method static \Illuminate\Support\Collection createCategories(string|array $categories, string $taxonomy, int $parent_id = null, int $sort = null)
+ * @method static \Illuminate\Support\Collection createCategories(string|array $categories, string $taxonomy, TaxonomyModel $parent_id = null, int $sort = null)
  */
 class Taxonomy extends Facade
 {
