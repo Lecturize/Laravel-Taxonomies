@@ -36,7 +36,6 @@ class ExtendTaxonomiesTables extends Migration
     public function up()
     {
         Schema::table($this->terms, function(Blueprint $table) {
-            $table->uuid('uuid')->nullable()->after('id');
             $table->longText('content')->nullable()->after('slug');
             $table->text('lead')->nullable()->after('content');
 
@@ -77,7 +76,6 @@ class ExtendTaxonomiesTables extends Migration
     public function down()
     {
         Schema::table($this->terms, function(Blueprint $table) {
-            $table->dropColumn('uuid');
             $table->dropColumn('content');
             $table->dropColumn('lead');
 
