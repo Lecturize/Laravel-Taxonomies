@@ -88,7 +88,7 @@ class Taxonomy extends Model
      */
     public function parent()
     {
-        return $this->belongsTo(config('lecturize.taxonomies.taxonomies.model', Taxonomy::class));
+        return $this->belongsTo(config('lecturize.taxonomies.taxonomies.model', Taxonomy::class), 'parent_id');
     }
 
     /**
@@ -98,7 +98,7 @@ class Taxonomy extends Model
      */
     public function children()
     {
-        return $this->hasMany(config('lecturize.taxonomies.taxonomies.model', Taxonomy::class));
+        return $this->hasMany(config('lecturize.taxonomies.taxonomies.model', Taxonomy::class), 'parent_id');
     }
 
     /**
