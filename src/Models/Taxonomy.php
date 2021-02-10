@@ -33,12 +33,12 @@ class Taxonomy extends Model
 
     /** @inheritdoc */
     protected $dates = [
-        'deleted_at'
+        'deleted_at',
     ];
 
     /** @inheritdoc */
     protected $with = [
-        'term'
+        'term',
     ];
 
     /** @inheritdoc */

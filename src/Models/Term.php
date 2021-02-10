@@ -26,7 +26,7 @@ class Term extends Model
 
     /** @inheritdoc */
     protected $dates = [
-        'deleted_at'
+        'deleted_at',
     ];
 
     /** @inheritdoc */

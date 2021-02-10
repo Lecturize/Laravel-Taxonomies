@@ -1,5 +1,6 @@
 <?php
 return [
+
     /**
      * Taxonomies
      */
@@ -33,4 +34,5 @@ return [
         ],
 
     ],
+
 ];

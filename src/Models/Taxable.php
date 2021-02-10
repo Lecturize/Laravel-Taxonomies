@@ -12,7 +12,7 @@ class Taxable extends Model
     protected $fillable = [
         'taxonomy_id',
         'taxable_id',
-        'taxable_type'
+        'taxable_type',
     ];
 
     /** @inheritdoc */
