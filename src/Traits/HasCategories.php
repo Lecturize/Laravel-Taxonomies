@@ -370,7 +370,7 @@ trait HasCategories
      */
     public function scopeWithinTaxonomy($query, $taxonomy_id)
     {
-        return $query->whereHas('taxed', function($q) use($taxonomy_id) {
+        return $query->whereHas('taxonomies', function($q) use($taxonomy_id) {
             $q->where('taxonomy_id', $taxonomy_id);
         });
     }
@@ -397,7 +397,7 @@ trait HasCategories
      */
     public function scopeWithinTaxonomies($query, $taxonomy_ids)
     {
-        return $query->whereHas('taxed', function($q) use($taxonomy_ids) {
+        return $query->whereHas('taxonomies', function($q) use($taxonomy_ids) {
             $q->whereIn('taxonomy_id', $taxonomy_ids);
         });
     }
