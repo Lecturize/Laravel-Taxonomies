@@ -328,14 +328,14 @@ trait HasCategories
      * scope term "Shoes" in taxonomy "blog_cat" (blog articles).
      *
      * @param  object  $query
-     * @param  string  $term_title
+     * @param  string  $category
      * @param  string  $taxonomy
      * @return mixed
      */
-    public function scopeCategorized($query, $term_title, $taxonomy)
+    public function scopeCategorized($query, $category, $taxonomy)
     {
         $term_ids = Taxonomy::where('taxonomy', $taxonomy)->pluck('term_id');
-        $term     = Term::whereIn('id', $term_ids)->where('title', $term_title)->first();
+        $term     = Term::whereIn('id', $term_ids)->where('title', $category)->first();
 
         return $query->whereHas('taxonomies', function($q) use($term) {
             $q->where('term_id', $term->id);
@@ -346,28 +346,29 @@ trait HasCategories
      * Scope that have been categorized in given terms (category titles) and taxonomy.
      *
      * @param  object  $query
-     * @param  array   $term_titles  The term titles as an array.
+     * @param  array   $categories  The category titles as an array.
      * @param  string  $taxonomy
      * @return mixed
      */
-    public function scopeCategorizedIn($query, $term_titles, $taxonomy)
+    public function scopeCategorizedIn($query, $categories, $taxonomy)
     {
-        $terms = TaxableUtils::makeTermsArray($term_titles);
+        if (is_string($categories))
+            $categories = explode('|', $categories);
 
-        foreach ($terms as $term)
+        foreach ($categories as $term)
             $this->scopeCategorized($query, $term, $taxonomy);
 
         return $query;
     }
 
     /**
-     * Scope by category id.
+     * Scope by the taxonomy id.
      *
      * @param  object   $query
      * @param  integer  $taxonomy_id
      * @return mixed
      */
-    public function scopeHasTaxonomy($query, $taxonomy_id)
+    public function scopeWithinTaxonomy($query, $taxonomy_id)
     {
         return $query->whereHas('taxed', function($q) use($taxonomy_id) {
             $q->where('taxonomy_id', $taxonomy_id);
@@ -384,7 +385,7 @@ trait HasCategories
      */
     public function scopeHasCategory($query, $taxonomy_id)
     {
-        return $this->scopeHasTaxonomy($query, $taxonomy_id);
+        return $this->scopeWithinTaxonomy($query, $taxonomy_id);
     }
 
     /**
@@ -394,7 +395,7 @@ trait HasCategories
      * @param  array   $taxonomy_ids
      * @return mixed
      */
-    public function scopeHasTaxonomies($query, $taxonomy_ids)
+    public function scopeWithinTaxonomies($query, $taxonomy_ids)
     {
         return $query->whereHas('taxed', function($q) use($taxonomy_ids) {
             $q->whereIn('taxonomy_id', $taxonomy_ids);
@@ -411,6 +412,6 @@ trait HasCategories
      */
     public function scopeHasCategories($query, $taxonomy_ids)
     {
-        return $this->scopeHasTaxonomies($query, $taxonomy_ids);
+        return $this->scopeWithinTaxonomies($query, $taxonomy_ids);
     }
 }
