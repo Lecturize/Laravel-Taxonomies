@@ -1,7 +1,9 @@
 <?php namespace Lecturize\Taxonomies\Models;
 
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 
 /**
  * Class Taxonomy
@@ -135,27 +137,75 @@ class Taxonomy extends Model
     }
 
     /**
+     * Get the breadcrumbs for this Taxonomy.
+     *
+     * @param  boolean  $exclude_self
+     * @return Collection
+     * @throws Exception
+     */
+    public function getBreadcrumbs($exclude_self = true): Collection
+    {
+        $key = "taxonomies.{$this->id}.breadcrumbs";
+        $key.= $exclude_self ? '.self-excluded' : '';
+
+        return cache()->remember($key, now()->addMonth(), function() use($exclude_self) {
+            $parameters = $this->getParentBreadcrumbs();
+
+            if (! $exclude_self)
+                $parameters->push($this->taxonomy);
+
+            return $parameters->reverse()->values();
+        });
+    }
+
+    /**
+     * Add parent breadcrumb.
+     *
+     * @param  Collection|null  $parameters
+     * @return Collection
+     */
+    function getParentBreadcrumbs(Collection $parameters = null): Collection
+    {
+        if ($parameters === null)
+            $parameters = collect();
+
+        $parameters->push(['title' => $this->term->title, 'slug' => $this->term->slug]);
+
+        if ($parent = $this->parent)
+            return $parent->getParentBreadcrumbs($parameters);
+
+        return $parameters;
+    }
+
+    /**
      * Get route parameters.
      *
-     * @return mixed
+     * @param  boolean  $exclude_self
+     * @return array
+     * @throws Exception
      */
-    public function getRouteParameters()
+    public function getRouteParameters($exclude_self = false): array
     {
-        $parameters = $this->getParentSlugs();
+        $key = "taxonomies.{$this->id}.breadcrumbs";
+        $key.= $exclude_self ? '.self-excluded' : '';
 
-        array_push($parameters, $this->taxonomy);
+        return cache()->remember($key, now()->addMonth(), function() use($exclude_self) {
+            $parameters = $this->getParentSlugs();
 
-        return array_reverse($parameters);
+            if (! $exclude_self)
+                array_push($parameters, $this->taxonomy);
+
+            return array_reverse($parameters);
+        });
     }
 
     /**
      * Get slugs of parent terms.
      *
-     * @param  Taxonomy  $taxonomy
-     * @param  array     $parameters
+     * @param  array  $parameters
      * @return array
      */
-    function getParentSlugs($parameters = [])
+    function getParentSlugs($parameters = []): array
     {
         array_push($parameters, $this->term->slug);
 
