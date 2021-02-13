@@ -105,11 +105,11 @@ class Taxonomy
      * Get category tree item.
      *
      * @param  Collection  $taxonomies
-     * @param  boolean     $is_child
      * @param  string      $taxable_class
+     * @param  boolean     $is_child
      * @return Collection
      */
-    public static function buildTree($taxonomies, $is_child = false, $taxable_class = '')
+    public static function buildTree($taxonomies, $taxable_class = '', $is_child = false)
     {
         $terms = collect();
 
@@ -123,19 +123,24 @@ class Taxonomy
                 $children = $children->sortBy('sort');
 
                 if (($children_count = $children->count()) > 0)
-                    $children = self::buildTree($children, true);
+                    $children = self::buildTree($children, $taxable_class, true);
             }
 
             $item_count = 0;
-            if ($taxable_class && ($taxables = $taxonomy->taxable))
+            if ($taxable_class && ($taxables = $taxonomy->taxables)) {
                 $item_count = $taxables->where('taxable_type', $taxable_class)
-                                       ->count();
+                                       ->filter(function ($item) {
+                                           // @todo Add dynamic callback.
+                                           return $item->whereNull('deleted_at')
+                                                       ->where('published_at', '>=', \Carbon\Carbon::now());
+                                       })->count();
+            }
 
-            $terms->put($taxonomy->term->uuid, [
+            $terms->put($taxonomy->term->slug, [
                 'title'    => $taxonomy->term->title,
                 'slug'     => $taxonomy->term->slug,
                 'count'    => $item_count,
-                'children' => $children_count > 0 ? $children : false,
+                'children' => $children_count > 0 ? $children : null,
                 'sort'     => $taxonomy->sort,
             ]);
         }
