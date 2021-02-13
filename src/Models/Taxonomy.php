@@ -117,6 +117,16 @@ class Taxonomy extends Model
     }
 
     /**
+     * Return the related items.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function taxables()
+    {
+        return $this->hasMany(Taxable::class);
+    }
+
+    /**
      * An example for related posts.
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
