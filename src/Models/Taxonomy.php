@@ -123,7 +123,7 @@ class Taxonomy extends Model
      */
     public function taxables()
     {
-        return $this->hasMany(Taxable::class);
+        return $this->hasMany(Taxable::class, 'taxonomy_id');
     }
 
     /**
