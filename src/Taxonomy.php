@@ -87,7 +87,7 @@ class Taxonomy
     public static function getTree(string $taxonomy, $taxable_class = '', $cached = true)
     {
         $key = "taxonomies.{$taxonomy}.tree";
-        $key.= $taxable_class ? '.'. Str::slug($taxable_class) : '';
+        $key.= $taxable_class ? '.taxables.'. Str::slug($taxable_class) : '';
 
         if (! $cached)
             cache()->forget($key);
@@ -128,12 +128,17 @@ class Taxonomy
 
             $item_count = 0;
             if ($taxable_class && ($taxables = $taxonomy->taxables)) {
-                $item_count = $taxables->where('taxable_type', $taxable_class)
-                                       ->filter(function ($item) {
-                                           // @todo Add dynamic callback.
-                                           return $item->whereNull('deleted_at')
-                                                       ->where('published_at', '>=', \Carbon\Carbon::now());
-                                       })->count();
+                $key = "taxonomies.{$taxonomy}.{$taxonomy->id}";
+                $key.= '.taxables.'. Str::slug($taxable_class) .'.count';
+
+                $item_count = cache()->remember($key, now()->addWeek(), function() use($taxables, $taxable_class) {
+                    return $taxables->where('taxable_type', $taxable_class)
+                                    ->filter(function ($item) {
+                                        // @todo Add dynamic callback.
+                                        return $item->whereNull('deleted_at')
+                                                    ->where('published_at', '>=', \Carbon\Carbon::now());
+                                    })->count();
+                });
             }
 
             $terms->put($taxonomy->term->slug, [
