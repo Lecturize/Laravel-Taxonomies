@@ -85,41 +85,4 @@ class Term extends Model
     {
         return $limit > 0 ? Str::slug($this->title, $limit) : $this->title;
     }
-
-    /**
-     * Get route parameters.
-     *
-     * @param  string  $taxonomy
-     * @return mixed
-     */
-    public function getRouteParameters($taxonomy)
-    {
-        $taxonomy = Taxonomy::taxonomy($taxonomy)
-                            ->term($this->title)
-                            ->with('parent')
-                            ->first();
-
-        $parameters = $this->getParentSlugs($taxonomy);
-
-        array_push($parameters, $taxonomy->taxonomy);
-
-        return array_reverse($parameters);
-    }
-
-    /**
-     * Get slugs of parent terms.
-     *
-     * @param  Taxonomy  $taxonomy
-     * @param  array     $parameters
-     * @return array
-     */
-    function getParentSlugs(Taxonomy $taxonomy, $parameters = [])
-    {
-        array_push($parameters, $taxonomy->term->slug);
-
-        if ($parent = $taxonomy->parent)
-            return $this->getParentSlugs($parent, $parameters);
-
-        return $parameters;
-    }
 }

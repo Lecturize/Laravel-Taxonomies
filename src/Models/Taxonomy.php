@@ -135,6 +135,37 @@ class Taxonomy extends Model
     }
 
     /**
+     * Get route parameters.
+     *
+     * @return mixed
+     */
+    public function getRouteParameters()
+    {
+        $parameters = $this->getParentSlugs();
+
+        array_push($parameters, $this->taxonomy);
+
+        return array_reverse($parameters);
+    }
+
+    /**
+     * Get slugs of parent terms.
+     *
+     * @param  Taxonomy  $taxonomy
+     * @param  array     $parameters
+     * @return array
+     */
+    function getParentSlugs($parameters = [])
+    {
+        array_push($parameters, $this->term->slug);
+
+        if ($parent = $this->parent)
+            return $parent->getParentSlugs($parameters);
+
+        return $parameters;
+    }
+
+    /**
      * Scope by a given taxonomy (e.g. "blog_cat" for blog posts or "shop_cat" for shop products).
      *
      * @param  object  $query
