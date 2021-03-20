@@ -143,11 +143,13 @@ class Taxonomy
             }
 
             $terms->put($taxonomy->term->slug, [
-                'title'    => $taxonomy->term->title,
-                'slug'     => $taxonomy->term->slug,
-                'count'    => $item_count,
-                'children' => $children_count > 0 ? $children : null,
-                'sort'     => $taxonomy->sort,
+                'title'            => $taxonomy->term->title,
+                'slug'             => $taxonomy->term->slug,
+                'sort'             => $taxonomy->sort,
+                'children'         => $children_count > 0 ? $children : null,
+                'taxable'          => $taxable_class,
+                'count'            => $item_count,
+                'count_cumulative' => $item_count + ($children ? $children->sum('count_cumulative') : 0),
             ]);
         }
 
