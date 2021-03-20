@@ -35,13 +35,13 @@ class Taxonomy
     /**
      * Creates terms and taxonomies.
      *
-     * @param  string|array   $categories
-     * @param  string         $taxonomy
-     * @param  TaxonomyModel  $parent
-     * @param  int            $sort
+     * @param  string|array        $categories
+     * @param  string              $taxonomy
+     * @param  TaxonomyModel|null  $parent
+     * @param  int|null            $sort
      * @return Collection
      */
-    public static function createCategories($categories, string $taxonomy, ?TaxonomyModel $parent = null, int $sort = null): ?Collection
+    public static function createCategories($categories, string $taxonomy, ?TaxonomyModel $parent = null, ?int $sort = null): ?Collection
     {
         if (is_string($categories))
             $categories = explode('|', $categories);
@@ -143,13 +143,17 @@ class Taxonomy
             }
 
             $terms->put($taxonomy->term->slug, [
+                'uuid'             => $taxonomy->uuid,
                 'title'            => $taxonomy->term->title,
                 'slug'             => $taxonomy->term->slug,
+                'content'          => $taxonomy->content ?? $taxonomy->term->content,
+                'lead'             => $taxonomy->lead    ?? $taxonomy->term->lead,
                 'sort'             => $taxonomy->sort,
+                'alias-params'     => ($alias = $taxonomy->alias) ? $alias->getRouteParameters() : null,
                 'children'         => $children_count > 0 ? $children : null,
                 'taxable'          => $taxable_class,
                 'count'            => $item_count,
-                'count_cumulative' => $item_count + ($children ? $children->sum('count_cumulative') : 0),
+                'count-cumulative' => $item_count + ($children ? $children->sum('count-cumulative') : 0),
             ]);
         }
 

@@ -16,6 +16,7 @@ class Taxonomy extends Model
     /** @inheritdoc */
     protected $fillable = [
         'parent_id',
+        'alias_id',
         'term_id',
         'taxonomy',
 
@@ -114,6 +115,16 @@ class Taxonomy extends Model
         return (new $class)->taxonomy($this->taxonomy)
                            ->where('parent_id', $this->parent_id)
                            ->orderBy('sort');
+    }
+
+    /**
+     * Get the parent taxonomy (categories).
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function alias()
+    {
+        return $this->belongsTo(config('lecturize.taxonomies.taxonomies.model', Taxonomy::class), 'alias_id');
     }
 
     /**
