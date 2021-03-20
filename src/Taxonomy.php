@@ -41,7 +41,7 @@ class Taxonomy
      * @param  int            $sort
      * @return Collection
      */
-    public static function createCategories($categories, $taxonomy, $parent = null, $sort = null)
+    public static function createCategories($categories, string $taxonomy, ?TaxonomyModel $parent = null, int $sort = null): ?Collection
     {
         if (is_string($categories))
             $categories = explode('|', $categories);
@@ -78,13 +78,13 @@ class Taxonomy
     /**
      * Get the category tree for given taxonomy.
      *
-     * @param  string   $taxonomy
-     * @param  string   $taxable_class
-     * @param  boolean  $cached
+     * @param  string  $taxonomy
+     * @param  string  $taxable_class
+     * @param  bool    $cached
      * @return Collection
      * @throws Exception
      */
-    public static function getTree(string $taxonomy, $taxable_class = '', $cached = true)
+    public static function getTree(string $taxonomy, string $taxable_class = '', bool $cached = true): ?Collection
     {
         $key = "taxonomies.{$taxonomy}.tree";
         $key.= $taxable_class ? '.taxables.'. Str::slug($taxable_class) : '';
@@ -92,13 +92,13 @@ class Taxonomy
         if (! $cached)
             cache()->forget($key);
 
-        $taxonomies = cache()->remember($key, now()->addWeek(), function() use($taxonomy, $taxable_class) {
-            return TaxonomyModel::with('parent', 'children', 'taxables.taxable')
-                                ->taxonomy($taxonomy)
-                                ->get();
-        });
+        return cache()->remember($key, now()->addWeek(), function() use($taxonomy, $taxable_class) {
+            $taxonomies = TaxonomyModel::with('parent', 'children')
+                                       ->taxonomy($taxonomy)
+                                       ->get();
 
-        return self::buildTree($taxonomies, $taxable_class);
+            return self::buildTree($taxonomies, $taxable_class);
+        });
     }
 
     /**
@@ -108,8 +108,9 @@ class Taxonomy
      * @param  string      $taxable_class
      * @param  boolean     $is_child
      * @return Collection
+     * @throws Exception
      */
-    public static function buildTree($taxonomies, $taxable_class = '', $is_child = false)
+    public static function buildTree(Collection $taxonomies, string $taxable_class = '', bool $is_child = false): ?Collection
     {
         $terms = collect();
 
