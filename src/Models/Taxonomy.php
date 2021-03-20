@@ -201,19 +201,19 @@ class Taxonomy extends Model
     /**
      * Get route parameters.
      *
-     * @param  boolean  $exclude_self
+     * @param  bool  $exclude_taxonomy
      * @return array
      * @throws Exception
      */
-    public function getRouteParameters($exclude_self = false): array
+    public function getRouteParameters(bool $exclude_taxonomy = true): array
     {
         $key = "taxonomies.{$this->id}.breadcrumbs";
-        $key.= $exclude_self ? '.self-excluded' : '';
+        $key.= $exclude_taxonomy ? '.without-taxonomy' : '';
 
-        return cache()->remember($key, now()->addMonth(), function() use($exclude_self) {
+        return cache()->remember($key, now()->addMonth(), function() use($exclude_taxonomy) {
             $parameters = $this->getParentSlugs();
 
-            if (! $exclude_self)
+            if (! $exclude_taxonomy)
                 array_push($parameters, $this->taxonomy);
 
             return array_reverse($parameters);
