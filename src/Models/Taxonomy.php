@@ -184,13 +184,18 @@ class Taxonomy extends Model
      *
      * @param  Collection|null  $parameters
      * @return Collection
+     * @throws Exception
      */
     function getParentBreadcrumbs(Collection $parameters = null): Collection
     {
         if ($parameters === null)
             $parameters = collect();
 
-        $parameters->push(['title' => $this->term->title, 'slug' => $this->term->slug]);
+        $parameters->push([
+            'title'  => $this->term->title,
+            'slug'   => $this->term->slug,
+            'params' => $this->getRouteParameters(),
+        ]);
 
         if ($parent = $this->parent)
             return $parent->getParentBreadcrumbs($parameters);
