@@ -1,13 +1,31 @@
 <?php namespace Lecturize\Taxonomies\Models;
 
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Collection;
 
 /**
  * Class Taxonomy
  * @package Lecturize\Taxonomies\Models
+ * @property string|null    $parent_id
+ * @property Taxonomy|null  $parent
+ * @property Collection     $children
+ * @property Collection     $siblings
+ * @property Collection     $taxables
+ * @property string|null    $alias_id
+ * @property Taxonomy|null  $alias
+ * @property string         $term_id
+ * @property Term           $term
+ * @property string         $taxonomy
+ * @property string|null    $description
+ * @property string|null    $content
+ * @property string|null    $lead
+ * @property int|null       $sort
+ * @property array|null     $properties
  */
 class Taxonomy extends Model
 {
@@ -78,7 +96,7 @@ class Taxonomy extends Model
     /**
      * Get the term, that will be displayed as this taxonomies (categories) title.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function term() {
         return $this->belongsTo(config('lecturize.taxonomies.terms.model', Term::class));
@@ -87,9 +105,9 @@ class Taxonomy extends Model
     /**
      * Get the parent taxonomy (categories).
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
-    public function parent()
+    public function parent(): BelongsTo
     {
         return $this->belongsTo(config('lecturize.taxonomies.taxonomies.model', Taxonomy::class), 'parent_id');
     }
@@ -97,9 +115,9 @@ class Taxonomy extends Model
     /**
      * Get the children taxonomies (categories).
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
-    public function children()
+    public function children(): HasMany
     {
         return $this->hasMany(config('lecturize.taxonomies.taxonomies.model', Taxonomy::class), 'parent_id');
     }
@@ -107,9 +125,9 @@ class Taxonomy extends Model
     /**
      * Get the children taxonomies (categories).
      *
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
-    public function siblings()
+    public function siblings(): Collection
     {
         $class = config('lecturize.taxonomies.taxonomies.model', Taxonomy::class);
         return (new $class)->taxonomy($this->taxonomy)
@@ -120,9 +138,9 @@ class Taxonomy extends Model
     /**
      * Get the parent taxonomy (categories).
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
-    public function alias()
+    public function alias(): BelongsTo
     {
         return $this->belongsTo(config('lecturize.taxonomies.taxonomies.model', Taxonomy::class), 'alias_id');
     }
@@ -130,9 +148,9 @@ class Taxonomy extends Model
     /**
      * Return the related items.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
-    public function taxables()
+    public function taxables(): HasMany
     {
         return $this->hasMany(Taxable::class, 'taxonomy_id');
     }
@@ -140,9 +158,9 @@ class Taxonomy extends Model
     /**
      * An example for related posts.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     * @return MorphToMany
      */
-    public function posts()
+    public function posts(): MorphToMany
     {
         return $this->morphedByMany(config('lecturize.community.posts.model', 'App\Models\Posts\Post'), 'taxable', 'taxables');
     }
@@ -150,9 +168,9 @@ class Taxonomy extends Model
     /**
      * An example for related products.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     * @return MorphToMany
      */
-    public function products()
+    public function products(): MorphToMany
     {
         return $this->morphedByMany(config('lecturize.shop.products.model', 'Lecturize\Shop\Products\Product'), 'taxable', 'taxables');
     }

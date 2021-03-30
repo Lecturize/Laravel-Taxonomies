@@ -1,6 +1,8 @@
 <?php namespace Lecturize\Taxonomies\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
@@ -9,6 +11,11 @@ use Cviebrock\EloquentSluggable\Sluggable;
 /**
  * Class Term
  * @package Lecturize\Taxonomies\Models
+ * @property string       $title
+ * @property string|null  $slug
+ * @property string|null  $content
+ * @property string|null  $lead
+ * @property Collection   $taxonomies
  */
 class Term extends Model
 {
@@ -19,7 +26,6 @@ class Term extends Model
     protected $fillable = [
         'title',
         'slug',
-
         'content',
         'lead',
     ];
@@ -45,9 +51,10 @@ class Term extends Model
     /**
      * Get the taxonomies (categories) this term belongs to.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
-    public function taxonomies() {
+    public function taxonomies(): HasMany
+    {
         return $this->hasMany(config('lecturize.taxonomies.taxonomies.model', Taxonomy::class));
     }
 
@@ -57,7 +64,7 @@ class Term extends Model
      *
      * @return string
      */
-    public function getNameAttribute()
+    public function getNameAttribute(): string
     {
         return $this->title;
     }
@@ -68,9 +75,9 @@ class Term extends Model
      *
      * @param  string  $locale
      * @param  int     $limit
-     * @return mixed
+     * @return string
      */
-    public function getDisplayName($locale = '', $limit = 0)
+    public function getDisplayName($locale = '', $limit = 0): string
     {
         return $this->getDisplayTitle($limit);
     }
@@ -79,9 +86,9 @@ class Term extends Model
      * Get display title.
      *
      * @param  int     $limit
-     * @return mixed
+     * @return string
      */
-    public function getDisplayTitle($limit = 0)
+    public function getDisplayTitle($limit = 0): string
     {
         return $limit > 0 ? Str::slug($this->title, $limit) : $this->title;
     }

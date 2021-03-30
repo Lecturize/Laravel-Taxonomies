@@ -1,10 +1,14 @@
 <?php namespace Lecturize\Taxonomies\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * Class Taxable
  * @package Lecturize\Taxonomies\Models
+ * @property Model      $taxable
+ * @property Taxonomy   $taxonomy
  */
 class Taxable extends Model
 {
@@ -26,9 +30,9 @@ class Taxable extends Model
     /**
      * The categorized model.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     * @return MorphTo
      */
-    public function taxable()
+    public function taxable(): MorphTo
     {
         return $this->morphTo();
     }
@@ -36,9 +40,9 @@ class Taxable extends Model
     /**
      * The taxonomy.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
-    public function taxonomy()
+    public function taxonomy(): BelongsTo
     {
         return $this->belongsTo(
             config('lecturize.taxonomies.taxonomies.model', Taxonomy::class),
