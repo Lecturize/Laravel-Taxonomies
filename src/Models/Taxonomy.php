@@ -1,31 +1,33 @@
 <?php namespace Lecturize\Taxonomies\Models;
 
 use Exception;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection as EloquentCollecton;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 
 /**
  * Class Taxonomy
  * @package Lecturize\Taxonomies\Models
- * @property string|null    $parent_id
- * @property Taxonomy|null  $parent
- * @property Collection     $children
- * @property Collection     $siblings
- * @property Collection     $taxables
- * @property string|null    $alias_id
- * @property Taxonomy|null  $alias
- * @property string         $term_id
- * @property Term           $term
- * @property string         $taxonomy
- * @property string|null    $description
- * @property string|null    $content
- * @property string|null    $lead
- * @property int|null       $sort
- * @property array|null     $properties
+ * @property string|null        $parent_id
+ * @property Taxonomy|null      $parent
+ * @property EloquentCollecton  $children
+ * @property EloquentCollecton  $siblings
+ * @property EloquentCollecton  $taxables
+ * @property string|null        $alias_id
+ * @property Taxonomy|null      $alias
+ * @property string             $term_id
+ * @property Term               $term
+ * @property string             $taxonomy
+ * @property string|null        $description
+ * @property string|null        $content
+ * @property string|null        $lead
+ * @property int|null           $sort
+ * @property array|null         $properties
  */
 class Taxonomy extends Model
 {
@@ -262,11 +264,11 @@ class Taxonomy extends Model
     /**
      * Scope by a given taxonomy (e.g. "blog_cat" for blog posts or "shop_cat" for shop products).
      *
-     * @param  object  $query
-     * @param  string  $taxonomy
-     * @return mixed
+     * @param  Builder  $query
+     * @param  string   $taxonomy
+     * @return Builder
      */
-    public function scopeTaxonomy($query, $taxonomy)
+    public function scopeTaxonomy(Builder $query, string $taxonomy): Builder
     {
         return $query->where('taxonomy', $taxonomy);
     }
@@ -274,12 +276,12 @@ class Taxonomy extends Model
     /**
      * Scope terms (category title) by given taxonomy.
      *
-     * @param  object      $query
+     * @param  Builder     $query
      * @param  string|int  $term
      * @param  string      $term_field
-     * @return mixed
+     * @return Builder
      */
-    public function scopeTerm($query, $term, $term_field = 'title')
+    public function scopeTerm(Builder $query, $term, string $term_field = 'title'): Builder
     {
         $term_field = ! in_array($term_field, ['id', 'title', 'slug']) ? 'title' : $term_field;
 
@@ -291,12 +293,12 @@ class Taxonomy extends Model
     /**
      * A simple search scope.
      *
-     * @param  object  $query
-     * @param  string  $term
-     * @param  string  $taxonomy
-     * @return mixed
+     * @param  Builder  $query
+     * @param  string   $term
+     * @param  string   $taxonomy
+     * @return Builder
      */
-    public function scopeSearch($query, $term, $taxonomy)
+    public function scopeSearch(Builder $query, string $term, string $taxonomy): Builder
     {
         return $query->whereHas('term', function($q) use($term, $taxonomy) {
             $q->where('title', 'like', '%'. $term .'%');
