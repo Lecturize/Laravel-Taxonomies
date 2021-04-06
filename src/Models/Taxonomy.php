@@ -2,7 +2,7 @@
 
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection as EloquentCollecton;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,21 +13,21 @@ use Illuminate\Support\Collection;
 /**
  * Class Taxonomy
  * @package Lecturize\Taxonomies\Models
- * @property string|null        $parent_id
- * @property Taxonomy|null      $parent
- * @property EloquentCollecton  $children
- * @property EloquentCollecton  $siblings
- * @property EloquentCollecton  $taxables
- * @property string|null        $alias_id
- * @property Taxonomy|null      $alias
- * @property string             $term_id
- * @property Term               $term
- * @property string             $taxonomy
- * @property string|null        $description
- * @property string|null        $content
- * @property string|null        $lead
- * @property int|null           $sort
- * @property array|null         $properties
+ * @property string|null         $parent_id
+ * @property Taxonomy|null       $parent
+ * @property EloquentCollection  $children
+ * @property EloquentCollection  $siblings
+ * @property EloquentCollection  $taxables
+ * @property string|null         $alias_id
+ * @property Taxonomy|null       $alias
+ * @property string              $term_id
+ * @property Term                $term
+ * @property string              $taxonomy
+ * @property string|null         $description
+ * @property string|null         $content
+ * @property string|null         $lead
+ * @property int|null            $sort
+ * @property array|null          $properties
  */
 class Taxonomy extends Model
 {
@@ -127,9 +127,9 @@ class Taxonomy extends Model
     /**
      * Get the children taxonomies (categories).
      *
-     * @return Collection
+     * @return Builder
      */
-    public function siblings(): Collection
+    public function siblings(): Builder
     {
         $class = config('lecturize.taxonomies.taxonomies.model', Taxonomy::class);
         return (new $class)->taxonomy($this->taxonomy)
