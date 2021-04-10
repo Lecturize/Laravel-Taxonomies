@@ -11,6 +11,7 @@ use Cviebrock\EloquentSluggable\Sluggable;
 /**
  * Class Term
  * @package Lecturize\Taxonomies\Models
+ * @property int          $id
  * @property string       $title
  * @property string|null  $slug
  * @property string|null  $content

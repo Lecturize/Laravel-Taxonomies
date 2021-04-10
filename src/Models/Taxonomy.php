@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
 /**
  * Class Taxonomy
  * @package Lecturize\Taxonomies\Models
+ * @property int                 $id
  * @property string|null         $parent_id
  * @property Taxonomy|null       $parent
  * @property EloquentCollection  $children
@@ -180,11 +181,11 @@ class Taxonomy extends Model
     /**
      * Get the breadcrumbs for this Taxonomy.
      *
-     * @param  boolean  $exclude_self
+     * @param  bool  $exclude_self
      * @return Collection
      * @throws Exception
      */
-    public function getBreadcrumbs($exclude_self = true): Collection
+    public function getBreadcrumbs(bool $exclude_self = true): Collection
     {
         $key = "taxonomies.{$this->id}.breadcrumbs";
         $key.= $exclude_self ? '.self-excluded' : '';
@@ -206,7 +207,7 @@ class Taxonomy extends Model
      * @return Collection
      * @throws Exception
      */
-    function getParentBreadcrumbs(Collection $parameters = null): Collection
+    function getParentBreadcrumbs(?Collection $parameters = null): Collection
     {
         if ($parameters === null)
             $parameters = collect();
@@ -251,7 +252,7 @@ class Taxonomy extends Model
      * @param  array  $parameters
      * @return array
      */
-    function getParentSlugs($parameters = []): array
+    function getParentSlugs(array $parameters = []): array
     {
         array_push($parameters, $this->term->slug);
 
