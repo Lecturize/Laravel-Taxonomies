@@ -78,26 +78,28 @@ class Taxonomy
     /**
      * Get the category tree for given taxonomy.
      *
-     * @param  string  $taxonomy
-     * @param  string  $taxable_class
-     * @param  bool    $cached
+     * @param  string      $taxonomy
+     * @param  string      $taxable_class
+     * @param  string      $taxable_callback
+     * @param  bool        $cached
      * @return Collection
      * @throws Exception
      */
-    public static function getTree(string $taxonomy, string $taxable_class = '', bool $cached = true): ?Collection
+    public static function getTree(string $taxonomy, string $taxable_class = '', string $taxable_callback = '', bool $cached = true): ?Collection
     {
         $key = "taxonomies.{$taxonomy}.tree";
-        $key.= $taxable_class ? '.taxables.'. Str::slug($taxable_class) : '';
+        $key.= $taxable_class ? '.'. Str::slug($taxable_class) : '';
+        $key.= $taxable_callback ? '.filter-'. Str::slug($taxable_callback) : '';
 
         if (! $cached)
             cache()->forget($key);
 
-        return cache()->remember($key, now()->addWeek(), function() use($taxonomy, $taxable_class) {
+        return cache()->remember($key, now()->addWeek(), function() use($taxonomy, $taxable_class, $taxable_callback) {
             $taxonomies = TaxonomyModel::with('parent', 'children')
                                        ->taxonomy($taxonomy)
                                        ->get();
 
-            return self::buildTree($taxonomies, $taxable_class);
+            return self::buildTree($taxonomies, $taxable_class, $taxable_callback);
         });
     }
 
@@ -106,11 +108,12 @@ class Taxonomy
      *
      * @param  Collection  $taxonomies
      * @param  string      $taxable_class
+     * @param  string      $taxable_callback
      * @param  boolean     $is_child
      * @return Collection
      * @throws Exception
      */
-    public static function buildTree(Collection $taxonomies, string $taxable_class = '', bool $is_child = false): ?Collection
+    public static function buildTree(Collection $taxonomies, string $taxable_class = '', string $taxable_callback = '', bool $is_child = false): ?Collection
     {
         $terms = collect();
 
@@ -124,20 +127,26 @@ class Taxonomy
                 $children = $children->sortBy('sort');
 
                 if (($children_count = $children->count()) > 0)
-                    $children = self::buildTree($children, $taxable_class, true);
+                    $children = self::buildTree($children, $taxable_class, $taxable_callback, true);
             }
 
             $item_count = 0;
             if ($taxable_class && ($taxables = $taxonomy->taxables)) {
-                $key = "taxonomies.{$taxonomy}.{$taxonomy->id}";
-                $key.= '.taxables.'. Str::slug($taxable_class) .'.count';
+                $key = "taxonomies.{$taxonomy->id}";
+                $key.= '.'. Str::slug($taxable_class);
+                $key.= $taxable_callback ? '.filter-'. Str::slug($taxable_callback) : '';
+                $key.= '.count';
 
-                $item_count = cache()->remember($key, now()->addWeek(), function() use($taxables, $taxable_class) {
+                $item_count = cache()->remember($key, now()->addWeek(), function() use($taxables, $taxable_class, $taxable_callback) {
                     return $taxables->where('taxable_type', $taxable_class)
-                                    ->filter(function ($item) {
-                                        // @todo Add dynamic callback.
-                                        return $item->whereNull('deleted_at')
-                                                    ->where('published_at', '>=', \Carbon\Carbon::now());
+                                    ->filter(function ($item) use ($taxable_callback) {
+                                        if ($taxable_callback && ($taxable = $item->taxable) && method_exists($taxable, $taxable_callback)) {
+                                            try {
+                                                return $taxable->{$taxable_callback}();
+                                            } catch (Exception $e) {}
+                                        }
+
+                                        return true;
                                     })->count();
                 });
             }
