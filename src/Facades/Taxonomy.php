@@ -16,7 +16,7 @@ use Lecturize\Taxonomies\Models\Taxonomy as TaxonomyModel;
 class Taxonomy extends Facade
 {
      /** @inheritdoc */
-     protected static function getFacadeAccessor()
+     protected static function getFacadeAccessor(): string
      {
           return 'taxonomies';
      }
