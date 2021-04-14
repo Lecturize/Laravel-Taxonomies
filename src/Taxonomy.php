@@ -78,26 +78,57 @@ class Taxonomy
     /**
      * Get the category tree for given taxonomy.
      *
-     * @param  string      $taxonomy
-     * @param  string      $taxable_class
-     * @param  string      $taxable_callback
-     * @param  bool        $cached
+     * @param  string|array  $taxonomy          Either the taxonomy, a taxonomy array or a taxonomy prefix suffixed with % (percent).
+     * @param  string        $taxable_class
+     * @param  string        $taxable_callback
+     * @param  bool          $cached
      * @return Collection
      * @throws Exception
      */
-    public static function getTree(string $taxonomy, string $taxable_class = '', string $taxable_callback = '', bool $cached = true): ?Collection
+    public static function getTree($taxonomy, string $taxable_class = '', string $taxable_callback = '', bool $cached = true): ?Collection
     {
-        $key = "taxonomies.{$taxonomy}.tree";
+        $prefix = null;
+
+        if (is_array($taxonomy)) {
+            $taxonomy   = array_filter(array_map('trim', $taxonomy));
+            $taxonomies = implode('-', $taxonomy);
+
+            $key = "taxonomies.$taxonomies.tree";
+
+        } elseif (is_string($taxonomy) && str_ends_with($taxonomy, '%')) {
+            $prefix = str_replace('%', '', $taxonomy);
+
+            $key = "taxonomies.prefixed-$prefix.tree";
+
+        } elseif (is_string($taxonomy)) {
+            $key = "taxonomies.$taxonomy.tree";
+
+        } else {
+            throw new Exception('The first method argument must be either a string or an array.');
+        }
+
         $key.= $taxable_class ? '.'. Str::slug($taxable_class) : '';
         $key.= $taxable_callback ? '.filter-'. Str::slug($taxable_callback) : '';
 
         if (! $cached)
             cache()->forget($key);
 
-        return cache()->remember($key, now()->addWeek(), function() use($taxonomy, $taxable_class, $taxable_callback) {
-            $taxonomies = TaxonomyModel::with('parent', 'children')
-                                       ->taxonomy($taxonomy)
-                                       ->get();
+        return cache()->remember($key, now()->addWeek(), function() use($taxonomy, $prefix, $taxable_class, $taxable_callback) {
+            if ($prefix) {
+                $taxonomies = TaxonomyModel::with('parent', 'children')
+                                           ->taxonomyStartsWith($prefix)
+                                           ->get();
+
+            } elseif (is_array($taxonomy)) {
+                $taxonomies = TaxonomyModel::with('parent', 'children')
+                                           ->taxonomies($taxonomy)
+                                           ->get();
+
+            } else {
+                $taxonomies = TaxonomyModel::with('parent', 'children')
+                                           ->taxonomy($taxonomy)
+                                           ->get();
+            }
 
             return self::buildTree($taxonomies, $taxable_class, $taxable_callback);
         });
