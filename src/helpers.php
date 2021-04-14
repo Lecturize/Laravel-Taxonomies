@@ -53,7 +53,7 @@ function build_categories_collection_from_tree(Collection $tree, $taxonomy, stri
             }
         }
 
-        $is_active = is_active_route($route, $params);
+        $is_active = taxonomies_is_active_route($route, $params);
 
         $item = [
             'uuid'             => $properties['uuid'],
@@ -160,7 +160,7 @@ function get_term_link(string $route = 'taxonomy.show', array $params = []): str
     return $route ? route($route, $params) : '#';
 }
 
-if (! function_exists('is_active_route')) :
+if (! function_exists('taxonomies_is_active_route')) :
     /**
      * Check if given route is the active route.
      *
@@ -168,14 +168,18 @@ if (! function_exists('is_active_route')) :
      * @param  array   $params
      * @return bool
      */
-    function is_active_route(string $route = '', array $params = []): bool {
-        if (is_array($params) && count($params) > 0)
-            return is_active_path($route, $params);
+    function taxonomies_is_active_route(string $route = '', array $params = []): bool {
+        if (is_array($params) && count($params) > 0) {
+            $route = route($route, $params, false);
+            $path  = '/'. request()->decodedPath();
+
+            return $route === $path;
+        }
 
         if (request()->routeIs($route))
             return true;
 
-        if (! $currentRoute = get_current_route())
+        if (! $currentRoute = app()->router->currentRouteName())
             return false;
 
         if (! is_array($route))
@@ -185,32 +189,5 @@ if (! function_exists('is_active_route')) :
             return true;
 
         return false;
-    }
-endif;
-
-if (! function_exists('get_current_route')) :
-    /**
-     * Shortcut to get current route.
-     *
-     * @return string
-     */
-    function get_current_route(): string {
-        return app()->router->currentRouteName();
-    }
-endif;
-
-if (! function_exists('is_active_path')) :
-    /**
-     * Check if current path matches url generated from the given route and route parameters.
-     *
-     * @param  string  $route
-     * @param  array   $params
-     * @return bool
-     */
-    function is_active_path(string $route = '', array $params = []): bool {
-        $route = route($route, $params, false);
-        $path  = '/'. request()->decodedPath();
-
-        return $route === $path;
     }
 endif;
