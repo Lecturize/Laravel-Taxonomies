@@ -275,6 +275,30 @@ class Taxonomy extends Model
     }
 
     /**
+     * Scope by a given taxonomy prefix (e.g. to retrieve both "shop_cat_a" and "shop_cat_b" you would scope "shop_cat%").
+     *
+     * @param  Builder  $query
+     * @param  string   $taxonomy_prefix
+     * @return Builder
+     */
+    public function scopeTaxonomyStartsWith(Builder $query, string $taxonomy_prefix): Builder
+    {
+        return $query->where('taxonomy', 'like', "$taxonomy_prefix%");
+    }
+
+    /**
+     * Scope by given taxonomies array, e.g. ['shop_cat_a', 'shop_cat_b'].
+     *
+     * @param  Builder  $query
+     * @param  array    $taxonomies
+     * @return Builder
+     */
+    public function scopeTaxonomies(Builder $query, array $taxonomies): Builder
+    {
+        return $query->whereIn('taxonomy', $taxonomies);
+    }
+
+    /**
      * Scope terms (category title) by given taxonomy.
      *
      * @param  Builder     $query
@@ -286,7 +310,7 @@ class Taxonomy extends Model
     {
         $term_field = ! in_array($term_field, ['id', 'title', 'slug']) ? 'title' : $term_field;
 
-        return $query->whereHas('term', function($q) use($term, $term_field) {
+        return $query->whereHas('term', function(Builder $q) use($term, $term_field) {
             $q->where($term_field, $term);
         });
     }
@@ -301,7 +325,7 @@ class Taxonomy extends Model
      */
     public function scopeSearch(Builder $query, string $term, string $taxonomy): Builder
     {
-        return $query->whereHas('term', function($q) use($term, $taxonomy) {
+        return $query->whereHas('term', function(Builder $q) use($term, $taxonomy) {
             $q->where('title', 'like', '%'. $term .'%');
         });
     }
