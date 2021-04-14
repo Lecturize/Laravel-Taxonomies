@@ -56,6 +56,8 @@ function build_categories_collection_from_tree(Collection $tree, $taxonomy, stri
         $is_active = is_active_route($route, $params);
 
         $item = [
+            'uuid'             => $properties['uuid'],
+            'taxonomy'         => $properties['taxonomy'],
             'title'            => $properties['title'],
             'slug'             => $properties['slug'],
             'route'            => $route,
