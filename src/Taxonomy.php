@@ -19,7 +19,7 @@ class Taxonomy
      *
      * @var Application
      */
-    protected $app;
+    protected Application $app;
 
     /**
      * Create a new Cache manager instance.
@@ -27,7 +27,7 @@ class Taxonomy
      * @param  Application  $app
      * @return void
      */
-    public function __construct($app)
+    public function __construct(Application $app)
     {
         $this->app = $app;
     }
