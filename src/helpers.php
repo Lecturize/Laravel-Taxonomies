@@ -15,7 +15,7 @@ use Lecturize\Taxonomies\Taxonomy;
  * @return Collection
  * @throws Exception
  */
-function get_categories_tree($taxonomy = 'category', string $route = '', string $taxable = '', string $taxable_callback = '', bool $include_empty = false): Collection {
+function get_categories_collection($taxonomy = 'category', string $route = '', string $taxable = '', string $taxable_callback = '', bool $include_empty = false): Collection {
     $tree = Taxonomy::getTree($taxonomy, $taxable, $taxable_callback);
 
     return build_categories_collection_from_tree($tree, $taxonomy, $route, $taxable, $include_empty);
