@@ -102,6 +102,10 @@ $model = Model::categorizedIn(['Add','Multiple','Categories'], 'blog_category')-
 $model = Model::categorized('My Category', 'blog_category')->get();
 ```
 
+## Helper functions
+
+I've included a set of helper functions for your convenience, see `src/helpers.php`.
+
 ## Example
 
 **Add categories to an Eloquent model**
