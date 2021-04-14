@@ -184,6 +184,7 @@ class Taxonomy
 
             $terms->put($taxonomy->term->slug, [
                 'uuid'             => $taxonomy->uuid,
+                'taxonomy'         => $taxonomy->taxonomy,
                 'title'            => $taxonomy->term->title,
                 'slug'             => $taxonomy->term->slug,
                 'content'          => $taxonomy->content ?? $taxonomy->term->content,
