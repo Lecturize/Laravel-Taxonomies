@@ -60,6 +60,8 @@ function build_categories_collection_from_tree(Collection $tree, $taxonomy, stri
             'taxonomy'         => $properties['taxonomy'],
             'title'            => $properties['title'],
             'slug'             => $properties['slug'],
+            'content'          => $properties['content'],
+            'lead'             => $properties['lead'],
             'route'            => $route,
             'params'           => is_array($properties['alias-params']) ? get_term_link($route, $properties['alias-params']) : $params,
             'link'             => is_array($properties['alias-params']) ? get_term_link($route, $properties['alias-params']) : get_term_link($route, $params),
