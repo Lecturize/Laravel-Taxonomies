@@ -148,17 +148,20 @@ class Taxonomy
     {
         $terms = collect();
 
-        foreach ($taxonomies as $taxonomy) {
-            if (! $is_child && ($parent = $taxonomy->parent))
+        if ($taxable_class)
+            $taxonomies->load('taxables');
+
+        foreach ($taxonomies->sortBy('sort') as $taxonomy) {
+            if (! $is_child && ! is_null($taxonomy->parent_id))
                 continue;
 
             $children_count = 0;
 
             if ($children = $taxonomy->children) {
-                $children = $children->sortBy('sort');
-
-                if (($children_count = $children->count()) > 0)
+                if (($children_count = $children->count()) > 0) {
+                    $children->load('parent', 'children');
                     $children = self::buildTree($children, $taxable_class, $taxable_callback, true);
+                }
             }
 
             $item_count = 0;
