@@ -19,8 +19,12 @@ trait PresentsCategories
      * @return null|RedirectResponse
      * @throws Exception
      */
-    protected function checkTaxonomyPath(Taxonomy $current, string $route = ''): ?RedirectResponse
+    protected function checkTaxonomyPath(?Taxonomy $current, string $route = ''): ?RedirectResponse
     {
+        // if there is no taxonomy, throw an exception
+        if (empty($current))
+            throw new Exception();
+
         $link = route($route, $current->getRouteParameters());
 
         $components = parse_url($link);
