@@ -12,6 +12,33 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 trait PresentsCategories
 {
     /**
+     * Check taxonomy path.
+     *
+     * @param  Taxonomy|null  $current
+     * @param  string|null    $route
+     * @return null|RedirectResponse
+     * @throws Exception
+     */
+    protected function checkTaxonomyPath(Taxonomy $current, string $route = ''): ?RedirectResponse
+    {
+        $link = route($route, $current->getRouteParameters());
+
+        $components = parse_url($link);
+
+        $path = ltrim($components['path'] ?? null, '/\\');
+
+        // if there is no path, throw an exception
+        if (empty($path))
+            throw new Exception();
+
+        // the link path and the request path don't match, so we redirect
+        if ($path !== request()->decodedPath())
+            return redirect($link);
+
+        return null;
+    }
+
+    /**
      * Check taxonomy hierarchy.
      *
      * @param  string|null    $slug
