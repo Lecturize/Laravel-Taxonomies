@@ -6,9 +6,9 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 /**
- * Class ExtendTaxonomiesTables
+ * Class ExtendTaxonomiesTable
  */
-class ExtendTaxonomiesTables extends Migration
+class ExtendTaxonomiesTable extends Migration
 {
     /**
      * Table names.
