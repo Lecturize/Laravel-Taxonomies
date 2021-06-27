@@ -5,8 +5,8 @@ use Illuminate\Support\ServiceProvider;
 class TaxonomiesServiceProvider extends ServiceProvider
 {
     protected $migrations = [
-        'CreateTaxonomiesTable' => 'create_taxonomies_table',
-        'UpdateTaxonomiesTable' => 'extend_taxonomies_table'
+        'CreateTaxonomiesTable'  => 'create_taxonomies_table',
+        'ExtendTaxonomiesTables' => 'extend_taxonomies_tables'
     ];
 
      public function boot()
