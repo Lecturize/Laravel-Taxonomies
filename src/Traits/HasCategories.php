@@ -327,7 +327,8 @@ trait HasCategories
         $term     = Term::whereIn('id', $term_ids)->where('title', $category)->first();
 
         return $query->whereHas('taxonomies', function($q) use($term) {
-            $q->where('term_id', $term->id);
+            if (is_object($term)) // to prevent "Trying to get property 'id' of non-object" error in case of category doesn't exists.
+                $q->where('term_id', $term->id);
         });
     }
 
