@@ -78,7 +78,7 @@ trait HasCategories
     /**
      * Add one or multiple terms (categories) within a given taxonomy.
      *
-     * @param  string|array   $categories
+     * @param  string|array  $categories
      */
     public function addCategories($categories, string $taxonomy, ?Taxonomy $parent = null): self
     {
@@ -94,7 +94,7 @@ trait HasCategories
     /**
      * Convenience method to add category to this model.
      *
-     * @param  string|array   $categories
+     * @param  string|array  $categories
      */
     public function addCategory($categories, string $taxonomy, ?Taxonomy $parent = null): self
     {
@@ -105,7 +105,7 @@ trait HasCategories
      * Add one or multiple terms in a given taxonomy.
      * @deprecated Use addCategory() or addCategories() instead.
      *
-     * @param  string|array   $categories
+     * @param  string|array  $categories
      */
     public function addTerm($categories, string $taxonomy, ?Taxonomy $parent = null): self
     {
@@ -269,9 +269,9 @@ trait HasCategories
 
     /**
      * Scope that have been categorized in given terms (category titles) and taxonomy.
-     * @param  array    $categories
+     * @param  array|string  $categories
      */
-    public function scopeCategorizedIn(Builder $query, array $categories, string $taxonomy): Builder
+    public function scopeCategorizedIn(Builder $query, $categories, string $taxonomy): Builder
     {
         if (is_string($categories))
             $categories = explode('|', $categories);
@@ -313,7 +313,7 @@ trait HasCategories
 
     /**
      * Scope by category ids.
-     * @param  Collection|array  $taxonomies
+     * @param  Collection|Taxonomy[]|array  $taxonomies
      */
     public function scopeWithinTaxonomies(Builder $query, $taxonomies): Builder
     {
@@ -333,7 +333,7 @@ trait HasCategories
     /**
      * Scope by category ids.
      * @deprecated This seemed confusing, use scopeHasTaxonomies() instead.
-     * @param  Collection|array  $taxonomies
+     * @param  Collection|Taxonomy[]|array  $taxonomies
      */
     public function scopeHasCategories(Builder $query, $taxonomies): Builder
     {
