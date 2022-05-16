@@ -44,7 +44,7 @@ trait ModelFinder
     public function findCategory($term, string $taxonomy, string $term_field = 'title'): ?Taxonomy
     {
         return Taxonomy::taxonomy($taxonomy)
-                       ->term($term, $term_field)
+                       ->byTerm($term, $term_field)
                        ->first();
     }
 }
