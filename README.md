@@ -138,6 +138,7 @@ So I wanted to keep my *Terms* unique throughout my app, which is why I separate
 ## Changelog
 
 - [2021-02-09] **v1.0** Extended the database tables to support UUIDs (be sure to generate some on your existing models) and better customization. Quite some breaking changes throughout the whole package.
+- [2022-05-16] **v1.1** Updated dependencies to PHP 8 and Laravel 8/9 - for older versions please refer to v1.0. Added new columns like `content`, `lead`, `meta_desc`, `visible` and `searchable` to taxonomies table. Renamed the `term` scope on the `Taxonomy` model to `byTerm` to avoid confusion with its `term` relationship method.
 
 ## License
 
