@@ -44,12 +44,10 @@ function build_categories_collection_from_tree(Collection $tree, $taxonomy, stri
 
         $children = null;
 
-        foreach ($properties as $key => $value) {
+        foreach ($properties as $value) {
             if ($value instanceof Collection) {
                 $children = build_categories_collection_from_tree($value, $taxonomy, $route, $taxable, $include_empty, $params, $attributes, true);
                 break;
-            } else {
-                $children = null;
             }
         }
 
