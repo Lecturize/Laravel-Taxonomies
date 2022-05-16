@@ -43,7 +43,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Lecturize\\Taxonomies\\Test\\": "tests"
+            "Lecturize\\Taxonomies\\Tests\\": "tests"
         }
     },
     "scripts": {

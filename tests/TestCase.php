@@ -1,4 +1,4 @@
-<?php namespace Lecturize\Taxonomies\Test;
+<?php namespace Lecturize\Taxonomies\Tests;
 
 use Lecturize\Taxonomies\TaxonomiesServiceProvider;
 
