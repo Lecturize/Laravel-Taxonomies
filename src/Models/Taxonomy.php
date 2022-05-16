@@ -13,22 +13,32 @@ use Illuminate\Support\Collection;
 /**
  * Class Taxonomy
  * @package Lecturize\Taxonomies\Models
- * @property int                 $id
- * @property string|null         $parent_id
- * @property Taxonomy|null       $parent
- * @property EloquentCollection  $children
- * @property EloquentCollection  $siblings
- * @property EloquentCollection  $taxables
- * @property string|null         $alias_id
- * @property Taxonomy|null       $alias
- * @property string              $term_id
- * @property Term                $term
- * @property string              $taxonomy
- * @property string|null         $description
- * @property string|null         $content
- * @property string|null         $lead
- * @property int|null            $sort
- * @property array|null          $properties
+ * @property int                            $id
+ * @property string|null                    $parent_id
+ * @property Taxonomy|null                  $parent
+ * @property EloquentCollection|Taxonomy[]  $children
+ * @property EloquentCollection|Taxonomy[]  $siblings
+ * @property EloquentCollection|Model[]     $taxables
+ * @property string|null                    $alias_id
+ * @property Taxonomy|null                  $alias
+ * @property string                         $term_id
+ * @property Term                           $term
+ * @property string                         $taxonomy
+ * @property string|null                    $description
+ * @property string|null                    $content
+ * @property string|null                    $lead
+ * @property string|null                    $meta_desc
+ * @property bool                           $visible
+ * @property bool                           $searchable
+ * @property int|null                       $sort
+ * @property array|null                     $properties
+ *
+ * @method Builder taxonomy(string $taxonomy)
+ * @method Builder taxonomyStartsWith(string $taxonomy_prefix)
+ * @method Builder taxonomies(array $taxonomies)
+ * @method Builder search(string $term, string $taxonomy)
+ * @method Builder visible
+ * @method Builder searchable
  */
 class Taxonomy extends Model
 {
@@ -44,14 +54,19 @@ class Taxonomy extends Model
         'description',
         'content',
         'lead',
+        'meta_desc',
 
         'sort',
+        'visible',
+        'searchable',
 
         'properties',
     ];
 
     /** @inheritdoc */
     protected $casts = [
+        'visible'    => 'boolean',
+        'searchable' => 'boolean',
         'properties' => 'array',
     ];
 
@@ -101,7 +116,8 @@ class Taxonomy extends Model
      *
      * @return BelongsTo
      */
-    public function term() {
+    public function term(): BelongsTo
+    {
         return $this->belongsTo(config('lecturize.taxonomies.terms.model', Term::class));
     }
 
@@ -240,7 +256,7 @@ class Taxonomy extends Model
             $parameters = $this->getParentSlugs();
 
             if (! $exclude_taxonomy)
-                array_push($parameters, $this->taxonomy);
+                $parameters[] = $this->taxonomy;
 
             return array_reverse($parameters);
         });
@@ -254,7 +270,7 @@ class Taxonomy extends Model
      */
     function getParentSlugs(array $parameters = []): array
     {
-        array_push($parameters, $this->term->slug);
+        $parameters[] = $this->term->slug;
 
         if ($parent = $this->parent)
             return $parent->getParentSlugs($parameters);
@@ -328,5 +344,27 @@ class Taxonomy extends Model
         return $query->whereHas('term', function(Builder $q) use($term, $taxonomy) {
             $q->where('title', 'like', '%'. $term .'%');
         });
+    }
+
+    /**
+     * Scope visible taxonomies.
+     *
+     * @param  Builder  $query
+     * @return Builder
+     */
+    public function scopeVisible(Builder $query): Builder
+    {
+        return $query->where('visible', 1);
+    }
+
+    /**
+     * Scope searchable taxonomies.
+     *
+     * @param  Builder  $query
+     * @return Builder
+     */
+    public function scopeSearchable(Builder $query): Builder
+    {
+        return $query->where('searchable', 1);
     }
 }

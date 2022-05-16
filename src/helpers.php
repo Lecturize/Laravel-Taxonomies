@@ -40,7 +40,7 @@ function build_categories_collection_from_tree(Collection $tree, $taxonomy, stri
 
     $count = 1;
     foreach ($tree as $slug => $properties) {
-        array_push($params, $properties['slug']);
+        $params[] = $properties['slug'];
 
         $children = null;
 

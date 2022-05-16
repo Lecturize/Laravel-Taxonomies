@@ -19,7 +19,7 @@ class Taxonomy
      *
      * @var Application
      */
-    protected Application $app;
+    protected $app;
 
     /**
      * Create a new Cache manager instance.
@@ -190,9 +190,12 @@ class Taxonomy
                 'taxonomy'         => $taxonomy->taxonomy,
                 'title'            => $taxonomy->term->title,
                 'slug'             => $taxonomy->term->slug,
-                'content'          => $taxonomy->content ?? $taxonomy->term->content,
-                'lead'             => $taxonomy->lead    ?? $taxonomy->term->lead,
+                'content'          => $taxonomy->content   ?? $taxonomy->term->content,
+                'lead'             => $taxonomy->lead      ?? $taxonomy->term->lead,
+                'meta_desc'        => $taxonomy->meta_desc ?? $taxonomy->lead ?? $taxonomy->term->lead,
                 'sort'             => $taxonomy->sort,
+                'visible'          => $taxonomy->visible,
+                'searchable'       => $taxonomy->searchable,
                 'alias-params'     => ($alias = $taxonomy->alias) ? $alias->getRouteParameters() : null,
                 'children'         => $children_count > 0 ? $children : null,
                 'taxable'          => $taxable_class,

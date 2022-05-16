@@ -11,12 +11,12 @@ use Cviebrock\EloquentSluggable\Sluggable;
 /**
  * Class Term
  * @package Lecturize\Taxonomies\Models
- * @property int          $id
- * @property string       $title
- * @property string|null  $slug
- * @property string|null  $content
- * @property string|null  $lead
- * @property Collection   $taxonomies
+ * @property int                    $id
+ * @property string                 $title
+ * @property string|null            $slug
+ * @property string|null            $content
+ * @property string|null            $lead
+ * @property Collection|Taxonomy[]  $taxonomies
  */
 class Term extends Model
 {
@@ -78,7 +78,7 @@ class Term extends Model
      * @param  int     $limit
      * @return string
      */
-    public function getDisplayName($locale = '', $limit = 0): string
+    public function getDisplayName(string $locale = '', int $limit = 0): string
     {
         return $this->getDisplayTitle($limit);
     }
@@ -86,10 +86,10 @@ class Term extends Model
     /**
      * Get display title.
      *
-     * @param  int     $limit
+     * @param  int  $limit
      * @return string
      */
-    public function getDisplayTitle($limit = 0): string
+    public function getDisplayTitle(int $limit = 0): string
     {
         return $limit > 0 ? Str::slug($this->title, $limit) : $this->title;
     }

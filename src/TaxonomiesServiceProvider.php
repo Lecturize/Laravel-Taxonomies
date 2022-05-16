@@ -5,8 +5,10 @@ use Illuminate\Support\ServiceProvider;
 class TaxonomiesServiceProvider extends ServiceProvider
 {
     protected $migrations = [
-        'CreateTaxonomiesTable'  => 'create_taxonomies_table',
-        'ExtendTaxonomiesTables' => 'extend_taxonomies_tables'
+        'CreateTaxonomiesTable'          => 'create_taxonomies_table',
+        'ExtendTaxonomiesTables'         => 'extend_taxonomies_tables',
+        'AddVisibilityToTaxonomiesTable' => 'add_visibility_to_taxonomies_table',
+        'AddMetaDescToTaxonomiesTable'   => 'add_meta_desc_to_taxonomies_table'
     ];
 
      public function boot()
@@ -31,12 +33,7 @@ class TaxonomiesServiceProvider extends ServiceProvider
           return [];
      }
 
-    /**
-     * Publish and merge the config file.
-     *
-     * @return void
-     */
-    private function handleConfig()
+    private function handleConfig(): void
     {
         $configPath = __DIR__ . '/../config/config.php';
 
@@ -45,12 +42,7 @@ class TaxonomiesServiceProvider extends ServiceProvider
         $this->mergeConfigFrom($configPath, 'lecturize');
     }
 
-    /**
-     * Publish migrations.
-     *
-     * @return void
-     */
-    private function handleMigrations()
+    private function handleMigrations(): void
     {
         $count = 0;
         foreach ($this->migrations as $class => $file) {
