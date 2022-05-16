@@ -33,12 +33,13 @@ use Illuminate\Support\Collection;
  * @property int|null                       $sort
  * @property array|null                     $properties
  *
- * @method Builder taxonomy(string $taxonomy)
- * @method Builder taxonomyStartsWith(string $taxonomy_prefix)
- * @method Builder taxonomies(array $taxonomies)
- * @method Builder search(string $term, string $taxonomy)
- * @method Builder visible
- * @method Builder searchable
+ * @method static Builder|Taxonomy taxonomy(string $taxonomy)
+ * @method static Builder|Taxonomy taxonomyStartsWith(string $taxonomy_prefix)
+ * @method static Builder|Taxonomy taxonomies(array $taxonomies)
+ * @method static Builder|Taxonomy byTerm(string $term, string $term_field)
+ * @method static Builder|Taxonomy search(string $term, string $taxonomy)
+ * @method static Builder|Taxonomy visible()
+ * @method static Builder|Taxonomy searchable()
  */
 class Taxonomy extends Model
 {
@@ -322,7 +323,7 @@ class Taxonomy extends Model
      * @param  string      $term_field
      * @return Builder
      */
-    public function scopeTerm(Builder $query, $term, string $term_field = 'title'): Builder
+    public function scopeByTerm(Builder $query, $term, string $term_field = 'title'): Builder
     {
         $term_field = ! in_array($term_field, ['id', 'title', 'slug']) ? 'title' : $term_field;
 
