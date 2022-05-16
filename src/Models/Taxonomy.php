@@ -204,7 +204,7 @@ class Taxonomy extends Model
      */
     public function getBreadcrumbs(bool $exclude_self = true): Collection
     {
-        $key = "taxonomies.{$this->id}.breadcrumbs";
+        $key = "taxonomies.$this->id.breadcrumbs";
         $key.= $exclude_self ? '.self-excluded' : '';
 
         return cache()->remember($key, now()->addMonth(), function() use($exclude_self) {
@@ -250,7 +250,7 @@ class Taxonomy extends Model
      */
     public function getRouteParameters(bool $exclude_taxonomy = true): array
     {
-        $key = "taxonomies.{$this->id}.breadcrumbs";
+        $key = "taxonomies.$this->id.breadcrumbs";
         $key.= $exclude_taxonomy ? '.without-taxonomy' : '';
 
         return cache()->remember($key, now()->addMonth(), function() use($exclude_taxonomy) {

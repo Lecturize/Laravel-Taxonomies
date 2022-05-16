@@ -166,7 +166,7 @@ class Taxonomy
 
             $item_count = 0;
             if ($taxable_class && ($taxables = $taxonomy->taxables)) {
-                $key = "taxonomies.{$taxonomy->id}";
+                $key = "taxonomies.$taxonomy->id";
                 $key.= '.'. Str::slug($taxable_class);
                 $key.= $taxable_callback ? '.filter-'. Str::slug($taxable_callback) : '';
                 $key.= '.count';
