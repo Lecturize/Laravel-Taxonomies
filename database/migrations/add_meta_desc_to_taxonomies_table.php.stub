@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 class AddMetaDescToTaxonomiesTable extends Migration
 {
-    protected $taxonomies;
+    protected string $taxonomies;
 
     public function __construct()
     {
