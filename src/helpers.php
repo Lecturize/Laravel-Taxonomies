@@ -207,24 +207,10 @@ if (! function_exists('maybe_tagged_cache')) :
      */
     function maybe_tagged_cache(array|string $names = 'taxonomies'): TaggedCache|CacheManager
     {
-        if (cache_supports_tags())
+        try {
             return Cache::tags($names);
-
-        return cache();
-    }
-endif;
-
-if (! function_exists('cache_supports_tags')) :
-    /**
-     * Check whether default cache driver supports tagging.
-     *
-     * @return bool
-     */
-    function cache_supports_tags(): bool
-    {
-        if (! is_null(config('lecturize.taxonomies.cache.use-tags')))
-            return config('lecturize.taxonomies.cache.use-tags');
-
-        return in_array(config('cache.default'), ['redis', 'memcached']);
+        } catch (Exception $e) {
+            return cache();
+        }
     }
 endif;

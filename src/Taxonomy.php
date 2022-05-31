@@ -112,7 +112,7 @@ class Taxonomy
         if (! $cached)
             cache()->forget($key);
 
-        return maybe_tagged_cache(['taxonomies', 'taxonomies:tree'])->remember($key, config('lecturize.taxonomies.cache.expiry', now()->addWeek()), function() use($taxonomy, $prefix, $taxable_class, $taxable_callback) {
+        return maybe_tagged_cache(['taxonomies', 'taxonomies:tree'])->remember($key, config('lecturize.taxonomies.cache-expiry', now()->addWeek()), function() use($taxonomy, $prefix, $taxable_class, $taxable_callback) {
             if ($prefix) {
                 $taxonomies = TaxonomyModel::with('parent', 'children')
                                            ->taxonomyStartsWith($prefix)
@@ -170,7 +170,7 @@ class Taxonomy
                 $key.= $taxable_callback ? '.filter-'. Str::slug($taxable_callback) : '';
                 $key.= '.count';
 
-                $item_count = maybe_tagged_cache(['taxonomies', 'taxonomies:tree'])->remember($key, config('lecturize.taxonomies.cache.expiry', now()->addWeek()), function() use($taxables, $taxable_class, $taxable_callback) {
+                $item_count = maybe_tagged_cache(['taxonomies', 'taxonomies:tree'])->remember($key, config('lecturize.taxonomies.cache-expiry', now()->addWeek()), function() use($taxables, $taxable_class, $taxable_callback) {
                     return $taxables->where('taxable_type', $taxable_class)
                                     ->filter(function ($item) use ($taxable_callback) {
                                         if ($taxable_callback && ($taxable = $item->taxable) && method_exists($taxable, $taxable_callback)) {

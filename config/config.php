@@ -37,11 +37,7 @@ return [
          * Cache settings.
          */
 
-        'cache' => [
-            'expiry'   => null, // set to null to use package default (one week)
-            'use-tags' => null, // set to null to have cache_supports_tags() evaluate whether cache tags are available or not
-        ],
-
+        'cache-expiry' => null, // set to null to use package default (one week)
 
     ],
 
