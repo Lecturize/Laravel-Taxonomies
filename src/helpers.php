@@ -222,8 +222,8 @@ if (! function_exists('cache_supports_tags')) :
      */
     function cache_supports_tags(): bool
     {
-        if (! is_null(config('lecturize.taxonomies.cache.use-tags-tagged-caches')))
-            return config('lecturize.taxonomies.cache.use-tags-tagged-caches');
+        if (! is_null(config('lecturize.taxonomies.cache.use-tags')))
+            return config('lecturize.taxonomies.cache.use-tags');
 
         return in_array(config('cache.default'), ['redis', 'memcached']);
     }
