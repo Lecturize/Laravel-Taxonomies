@@ -18,7 +18,7 @@ use Lecturize\Taxonomies\Taxonomy;
  * @return Collection
  * @throws Exception
  */
-function get_categories_collection($taxonomy = 'category', string $route = '', string $taxable = '', string $taxable_callback = '', bool $include_empty = false): Collection {
+function get_categories_collection(string|array $taxonomy = 'category', string $route = '', string $taxable = '', string $taxable_callback = '', bool $include_empty = false): Collection {
     $tree = Taxonomy::getTree($taxonomy, $taxable, $taxable_callback);
 
     return build_categories_collection_from_tree($tree, $taxonomy, $route, $taxable, $include_empty);
@@ -37,7 +37,7 @@ function get_categories_collection($taxonomy = 'category', string $route = '', s
  * @param  bool          $is_child
  * @return Collection
  */
-function build_categories_collection_from_tree(Collection $tree, $taxonomy, string $route, string $taxable, bool $include_empty = false, array $params = [], array $attributes = [], bool $is_child = false): Collection {
+function build_categories_collection_from_tree(Collection $tree, string|array $taxonomy, string $route, string $taxable, bool $include_empty = false, array $params = [], array $attributes = [], bool $is_child = false): Collection {
     $temp  = $params;
     $items = collect();
 
@@ -124,12 +124,12 @@ function get_categories_for_model(Model $model, string $taxonomy = 'category', s
 /**
  * Get category options for a select box.
  *
- * @param  mixed   $categories
+ * @param  array   $categories
  * @param  string  $selected_slug
  * @param  int     $level
  * @return string
  */
-function get_category_options($categories, string $selected_slug = '', int $level = 0): string {
+function get_category_options(array $categories, string $selected_slug = '', int $level = 0): string {
     $category_items = [];
 
     foreach ($categories as $item) {
