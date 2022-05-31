@@ -6,7 +6,7 @@ return [
      */
     'taxonomies' => [
 
-        /**
+        /*
          * Terms.
          */
 
@@ -15,7 +15,7 @@ return [
             'model' => \Lecturize\Taxonomies\Models\Term::class,
         ],
 
-        /**
+        /*
          * Taxonomies.
          */
 
@@ -24,7 +24,7 @@ return [
             'model' => \Lecturize\Taxonomies\Models\Taxonomy::class,
         ],
 
-        /**
+        /*
          * The "Taxable" pivot.
          */
 
@@ -33,7 +33,7 @@ return [
             'model' => \Lecturize\Taxonomies\Models\Taxable::class,
         ],
 
-        /**
+        /*
          * Cache settings.
          */
 
