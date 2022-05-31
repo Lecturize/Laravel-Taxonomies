@@ -1,7 +1,10 @@
 <?php
 
+use Illuminate\Cache\CacheManager;
+use Illuminate\Cache\TaggedCache;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use Lecturize\Taxonomies\Taxonomy;
 
 /**
@@ -192,5 +195,36 @@ if (! function_exists('taxonomies_is_active_route')) :
             return true;
 
         return false;
+    }
+endif;
+
+if (! function_exists('maybe_tagged_cache')) :
+    /**
+     * Get a tagged cache instance.
+     *
+     * @param  array|string  $names
+     * @return TaggedCache|CacheManager
+     */
+    function maybe_tagged_cache(array|string $names = 'taxonomies'): TaggedCache|CacheManager
+    {
+        if (cache_supports_tags())
+            return Cache::tags($names);
+
+        return cache();
+    }
+endif;
+
+if (! function_exists('cache_supports_tags')) :
+    /**
+     * Check whether default cache driver supports tagging.
+     *
+     * @return bool
+     */
+    function cache_supports_tags(): bool
+    {
+        if (! is_null(config('lecturize.taxonomies.cache.use-tags-tagged-caches')))
+            return config('lecturize.taxonomies.cache.use-tags-tagged-caches');
+
+        return in_array(config('cache.default'), ['redis', 'memcached']);
     }
 endif;

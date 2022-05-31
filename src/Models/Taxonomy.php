@@ -36,7 +36,7 @@ use Illuminate\Support\Collection;
  * @method static Builder|Taxonomy taxonomy(string $taxonomy)
  * @method static Builder|Taxonomy taxonomyStartsWith(string $taxonomy_prefix)
  * @method static Builder|Taxonomy taxonomies(array $taxonomies)
- * @method static Builder|Taxonomy byTerm(string $term, string $term_field)
+ * @method static Builder|Taxonomy byTerm(string|int $term, string $term_field)
  * @method static Builder|Taxonomy search(string $term, string $taxonomy)
  * @method static Builder|Taxonomy visible()
  * @method static Builder|Taxonomy searchable()
@@ -207,7 +207,7 @@ class Taxonomy extends Model
         $key = "taxonomies.$this->id.breadcrumbs";
         $key.= $exclude_self ? '.self-excluded' : '';
 
-        return cache()->remember($key, now()->addMonth(), function() use($exclude_self) {
+        return maybe_tagged_cache(['taxonomies', 'taxonomies:taxonomy', "taxonomies:taxonomy:$this->id"])->rememberForever($key, function() use($exclude_self) {
             $parameters = $this->getParentBreadcrumbs();
 
             if (! $exclude_self)
@@ -250,10 +250,10 @@ class Taxonomy extends Model
      */
     public function getRouteParameters(bool $exclude_taxonomy = true): array
     {
-        $key = "taxonomies.$this->id.breadcrumbs";
+        $key = "taxonomies.$this->id.route-parameters";
         $key.= $exclude_taxonomy ? '.without-taxonomy' : '';
 
-        return cache()->remember($key, now()->addMonth(), function() use($exclude_taxonomy) {
+        return maybe_tagged_cache(['taxonomies', 'taxonomies:taxonomy', "taxonomies:taxonomy:$this->id"])->rememberForever($key, function() use($exclude_taxonomy) {
             $parameters = $this->getParentSlugs();
 
             if (! $exclude_taxonomy)
@@ -323,7 +323,7 @@ class Taxonomy extends Model
      * @param  string      $term_field
      * @return Builder
      */
-    public function scopeByTerm(Builder $query, $term, string $term_field = 'title'): Builder
+    public function scopeByTerm(Builder $query, string|int $term, string $term_field = 'title'): Builder
     {
         $term_field = ! in_array($term_field, ['id', 'title', 'slug']) ? 'title' : $term_field;
 
