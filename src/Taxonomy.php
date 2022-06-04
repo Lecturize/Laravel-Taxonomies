@@ -103,20 +103,22 @@ class Taxonomy
             cache()->forget($key);
 
         return maybe_tagged_cache(['taxonomies', 'taxonomies:tree'])->remember($key, config('lecturize.taxonomies.cache-expiry', now()->addWeek()), function() use($taxonomy, $prefix, $taxable_relation_attribute, $taxable_callback) {
+            $taxonomy_model = app(config('lecturize.taxonomies.taxonomies.model', Taxonomy::class));
+
             if ($prefix) {
-                $taxonomies = TaxonomyModel::with('parent', 'children')
-                                           ->taxonomyStartsWith($prefix)
-                                           ->get();
+                $taxonomies = $taxonomy_model::with('parent', 'children')
+                                             ->taxonomyStartsWith($prefix)
+                                             ->get();
 
             } elseif (is_array($taxonomy)) {
-                $taxonomies = TaxonomyModel::with('parent', 'children')
-                                           ->taxonomies($taxonomy)
-                                           ->get();
+                $taxonomies = $taxonomy_model::with('parent', 'children')
+                                             ->taxonomies($taxonomy)
+                                             ->get();
 
             } else {
-                $taxonomies = TaxonomyModel::with('parent', 'children')
-                                           ->taxonomy($taxonomy)
-                                           ->get();
+                $taxonomies = $taxonomy_model::with('parent', 'children')
+                                             ->taxonomy($taxonomy)
+                                             ->get();
             }
 
             return self::buildTree($taxonomies, $taxable_relation_attribute, $taxable_callback);
@@ -164,6 +166,7 @@ class Taxonomy
             }
 
             $item_count = 0;
+
             if ($relation && method_exists($taxonomy, $relation) && ($taxables = $taxonomy->{$relation})) {
                 $key = "taxonomies.$taxonomy->id";
                 $key.= '.'. Str::slug($relation);
@@ -172,9 +175,9 @@ class Taxonomy
 
                 $item_count = maybe_tagged_cache(['taxonomies', 'taxonomies:tree'])->remember($key, config('lecturize.taxonomies.cache-expiry', now()->addWeek()), function() use($taxables, $taxable_callback) {
                     return $taxables->filter(function ($item) use ($taxable_callback) {
-                                        if ($taxable_callback && ($taxable = $item->taxable) && method_exists($taxable, $taxable_callback)) {
+                                        if ($taxable_callback && method_exists($item, $taxable_callback)) {
                                             try {
-                                                return $taxable->{$taxable_callback}();
+                                                return $item->{$taxable_callback}();
                                             } catch (Exception) {}
                                         }
 
