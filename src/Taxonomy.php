@@ -67,14 +67,14 @@ class Taxonomy
     /**
      * Get the category tree for given taxonomy.
      *
-     * @param  string|array  $taxonomy                    Either the taxonomy, a taxonomy array or a taxonomy prefix suffixed with % (percent).
-     * @param  string        $taxable_relation_attribute  A relationship method on a custom Taxonomy model, if a class is given we'll try to guess a relationship method of it.
+     * @param  string|array  $taxonomy          Either the taxonomy, a taxonomy array or a taxonomy prefix suffixed with % (percent).
+     * @param  string        $taxable_relation  A relationship method on a custom Taxonomy model, if a class is given we'll try to guess a relationship method of it.
      * @param  string        $taxable_callback
      * @param  bool          $cached
      * @return Collection
      * @throws Exception
      */
-    public static function getTree(string|array $taxonomy, string $taxable_relation_attribute = '', string $taxable_callback = '', bool $cached = true): Collection
+    public static function getTree(string|array $taxonomy, string $taxable_relation = '', string $taxable_callback = '', bool $cached = true): Collection
     {
         $prefix = null;
 
@@ -96,13 +96,13 @@ class Taxonomy
             throw new Exception('The first method argument must be either a string or an array.');
         }
 
-        $key.= $taxable_relation_attribute ? '.'. Str::slug($taxable_relation_attribute) : '';
+        $key.= $taxable_relation ? '.'. Str::slug($taxable_relation) : '';
         $key.= $taxable_callback ? '.filter-'. Str::slug($taxable_callback) : '';
 
         if (! $cached)
             cache()->forget($key);
 
-        return maybe_tagged_cache(['taxonomies', 'taxonomies:tree'])->remember($key, config('lecturize.taxonomies.cache-expiry', now()->addWeek()), function() use($taxonomy, $prefix, $taxable_relation_attribute, $taxable_callback) {
+        return maybe_tagged_cache(['taxonomies', 'taxonomies:tree'])->remember($key, config('lecturize.taxonomies.cache-expiry', now()->addWeek()), function() use($taxonomy, $prefix, $taxable_relation, $taxable_callback) {
             $taxonomy_model = app(config('lecturize.taxonomies.taxonomies.model', Taxonomy::class));
 
             if ($prefix) {
@@ -121,7 +121,7 @@ class Taxonomy
                                              ->get();
             }
 
-            return self::buildTree($taxonomies, $taxable_relation_attribute, $taxable_callback);
+            return self::buildTree($taxonomies, $taxable_relation, $taxable_callback);
         });
     }
 
@@ -129,24 +129,24 @@ class Taxonomy
      * Get category tree item.
      *
      * @param  Collection  $taxonomies
-     * @param  string      $taxable_relation_attribute
+     * @param  string      $taxable_relation
      * @param  string      $taxable_callback
      * @param  boolean     $is_child
      * @return Collection
      * @throws Exception
      */
-    public static function buildTree(Collection $taxonomies, string $taxable_relation_attribute = '', string $taxable_callback = '', bool $is_child = false): Collection
+    public static function buildTree(Collection $taxonomies, string $taxable_relation = '', string $taxable_callback = '', bool $is_child = false): Collection
     {
         $terms = collect();
 
         $relation = '';
 
-        if ($taxable_relation_attribute) {
-            if (str_contains($taxable_relation_attribute, '\\')) {
-                $relation = strtolower(substr($taxable_relation_attribute, strrpos($taxable_relation_attribute, '\\') + 1));
+        if ($taxable_relation) {
+            if (str_contains($taxable_relation, '\\')) {
+                $relation = strtolower(substr($taxable_relation, strrpos($taxable_relation, '\\') + 1));
                 $relation = Str::plural($relation);
             } else {
-                $relation = $taxable_relation_attribute;
+                $relation = $taxable_relation;
             }
 
             $taxonomies->load($relation);
@@ -161,7 +161,7 @@ class Taxonomy
             if ($children = $taxonomy->children) {
                 if (($children_count = $children->count()) > 0) {
                     $children->load('parent', 'children');
-                    $children = self::buildTree($children, $taxable_relation_attribute, $taxable_callback, true);
+                    $children = self::buildTree($children, $taxable_relation, $taxable_callback, true);
                 }
             }
 

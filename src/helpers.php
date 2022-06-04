@@ -12,17 +12,17 @@ use Lecturize\Taxonomies\Taxonomy;
  *
  * @param  string|array  $taxonomy
  * @param  string        $route
- * @param  string        $taxable
+ * @param  string        $taxable_relation
  * @param  string        $taxable_callback
  * @param  bool          $include_empty
  * @return Collection
  * @throws Exception
  */
-function get_categories_collection(string|array $taxonomy = 'category', string $route = '', string $taxable = '', string $taxable_callback = '', bool $include_empty = false): Collection
+function get_categories_collection(string|array $taxonomy = 'category', string $route = '', string $taxable_relation = '', string $taxable_callback = '', bool $include_empty = false): Collection
 {
-    $tree = Taxonomy::getTree($taxonomy, $taxable, $taxable_callback);
+    $tree = Taxonomy::getTree($taxonomy, $taxable_relation, $taxable_callback);
 
-    return build_categories_collection_from_tree($tree, $taxonomy, $route, $taxable, $include_empty);
+    return build_categories_collection_from_tree($tree, $taxonomy, $route, $taxable_relation, $include_empty);
 }
 
 /**
@@ -31,14 +31,14 @@ function get_categories_collection(string|array $taxonomy = 'category', string $
  * @param  Collection    $tree
  * @param  string|array  $taxonomy
  * @param  string        $route
- * @param  mixed         $taxable
+ * @param  string        $taxable_relation
  * @param  bool          $include_empty
  * @param  array         $params
  * @param  array         $attributes
  * @param  bool          $is_child
  * @return Collection
  */
-function build_categories_collection_from_tree(Collection $tree, string|array $taxonomy, string $route, string $taxable, bool $include_empty = false, array $params = [], array $attributes = [], bool $is_child = false): Collection
+function build_categories_collection_from_tree(Collection $tree, string|array $taxonomy, string $route, string $taxable_relation, bool $include_empty = false, array $params = [], array $attributes = [], bool $is_child = false): Collection
 {
     $temp  = $params;
     $items = collect();
@@ -51,7 +51,7 @@ function build_categories_collection_from_tree(Collection $tree, string|array $t
 
         foreach ($properties as $value) {
             if ($value instanceof Collection) {
-                $children = build_categories_collection_from_tree($value, $taxonomy, $route, $taxable, $include_empty, $params, $attributes, true);
+                $children = build_categories_collection_from_tree($value, $taxonomy, $route, $taxable_relation, $include_empty, $params, $attributes, true);
                 break;
             }
         }
