@@ -4,11 +4,12 @@ use Illuminate\Support\ServiceProvider;
 
 class TaxonomiesServiceProvider extends ServiceProvider
 {
-    protected $migrations = [
+    protected array $migrations = [
         'CreateTaxonomiesTable'          => 'create_taxonomies_table',
         'ExtendTaxonomiesTables'         => 'extend_taxonomies_tables',
         'AddVisibilityToTaxonomiesTable' => 'add_visibility_to_taxonomies_table',
-        'AddMetaDescToTaxonomiesTable'   => 'add_meta_desc_to_taxonomies_table'
+        'AddMetaDescToTaxonomiesTable'   => 'add_meta_desc_to_taxonomies_table',
+        'AddPrimaryKeyToTaxablesTable'   => 'add_primary_key_to_taxables_table'
     ];
 
      public function boot()
@@ -25,12 +26,6 @@ class TaxonomiesServiceProvider extends ServiceProvider
          $this->app->singleton('taxonomies', function ($app) {
              return new Taxonomy($app);
          });
-     }
-
-    /** @inheritdoc */
-     public function provides()
-     {
-          return [];
      }
 
     private function handleConfig(): void
