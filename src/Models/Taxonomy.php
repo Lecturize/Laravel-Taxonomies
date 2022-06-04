@@ -176,26 +176,6 @@ class Taxonomy extends Model
     }
 
     /**
-     * An example for related posts.
-     *
-     * @return MorphToMany
-     */
-    public function posts(): MorphToMany
-    {
-        return $this->morphedByMany(config('lecturize.community.posts.model', 'App\Models\Posts\Post'), 'taxable', 'taxables');
-    }
-
-    /**
-     * An example for related products.
-     *
-     * @return MorphToMany
-     */
-    public function products(): MorphToMany
-    {
-        return $this->morphedByMany(config('lecturize.shop.products.model', 'Lecturize\Shop\Products\Product'), 'taxable', 'taxables');
-    }
-
-    /**
      * Get the breadcrumbs for this Taxonomy.
      *
      * @param  bool  $exclude_self
