@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 
@@ -163,16 +162,6 @@ class Taxonomy extends Model
     public function alias(): BelongsTo
     {
         return $this->belongsTo(config('lecturize.taxonomies.taxonomies.model', Taxonomy::class), 'alias_id');
-    }
-
-    /**
-     * Return the related items.
-     *
-     * @return HasMany
-     */
-    public function taxables(): HasMany
-    {
-        return $this->hasMany(Taxable::class, 'taxonomy_id');
     }
 
     /**

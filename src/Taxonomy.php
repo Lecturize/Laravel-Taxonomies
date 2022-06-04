@@ -14,19 +14,8 @@ use Lecturize\Taxonomies\Models\Term;
  */
 class Taxonomy
 {
-    /**
-     * The application instance.
-     *
-     * @var Application
-     */
     protected Application $app;
 
-    /**
-     * Create a new Cache manager instance.
-     *
-     * @param  Application  $app
-     * @return void
-     */
     public function __construct(Application $app)
     {
         $this->app = $app;
@@ -138,18 +127,28 @@ class Taxonomy
      * Get category tree item.
      *
      * @param  Collection  $taxonomies
-     * @param  string      $taxable_class
+     * @param  string      $taxable_relation_attribute
      * @param  string      $taxable_callback
      * @param  boolean     $is_child
      * @return Collection
      * @throws Exception
      */
-    public static function buildTree(Collection $taxonomies, string $taxable_class = '', string $taxable_callback = '', bool $is_child = false): Collection
+    public static function buildTree(Collection $taxonomies, string $taxable_relation_attribute = '', string $taxable_callback = '', bool $is_child = false): Collection
     {
         $terms = collect();
 
-        if ($taxable_class)
-            $taxonomies->load('taxables');
+        $relation = '';
+
+        if ($taxable_relation_attribute) {
+            if (str_contains($taxable_relation_attribute, '\\')) {
+                $relation = strtolower(substr($taxable_relation_attribute, strrpos($taxable_relation_attribute, '\\') + 1));
+                $relation = Str::plural($relation);
+            } else {
+                $relation = $taxable_relation_attribute;
+            }
+
+            $taxonomies->load($relation);
+        }
 
         foreach ($taxonomies->sortBy('sort') as $taxonomy) {
             if (! $is_child && ! is_null($taxonomy->parent_id))
@@ -160,20 +159,19 @@ class Taxonomy
             if ($children = $taxonomy->children) {
                 if (($children_count = $children->count()) > 0) {
                     $children->load('parent', 'children');
-                    $children = self::buildTree($children, $taxable_class, $taxable_callback, true);
+                    $children = self::buildTree($children, $taxable_relation_attribute, $taxable_callback, true);
                 }
             }
 
             $item_count = 0;
-            if ($taxable_class && ($taxables = $taxonomy->taxables)) {
+            if ($relation && method_exists($taxonomy, $relation) && ($taxables = $taxonomy->{$relation})) {
                 $key = "taxonomies.$taxonomy->id";
-                $key.= '.'. Str::slug($taxable_class);
+                $key.= '.'. Str::slug($relation);
                 $key.= $taxable_callback ? '.filter-'. Str::slug($taxable_callback) : '';
                 $key.= '.count';
 
-                $item_count = maybe_tagged_cache(['taxonomies', 'taxonomies:tree'])->remember($key, config('lecturize.taxonomies.cache-expiry', now()->addWeek()), function() use($taxables, $taxable_class, $taxable_callback) {
-                    return $taxables->where('taxable_type', $taxable_class)
-                                    ->filter(function ($item) use ($taxable_callback) {
+                $item_count = maybe_tagged_cache(['taxonomies', 'taxonomies:tree'])->remember($key, config('lecturize.taxonomies.cache-expiry', now()->addWeek()), function() use($taxables, $taxable_callback) {
+                    return $taxables->filter(function ($item) use ($taxable_callback) {
                                         if ($taxable_callback && ($taxable = $item->taxable) && method_exists($taxable, $taxable_callback)) {
                                             try {
                                                 return $taxable->{$taxable_callback}();
@@ -198,7 +196,7 @@ class Taxonomy
                 'searchable'       => $taxonomy->searchable,
                 'alias-params'     => ($alias = $taxonomy->alias) ? $alias->getRouteParameters() : null,
                 'children'         => $children_count > 0 ? $children : null,
-                'taxable'          => $taxable_class,
+                'taxable'          => $relation,
                 'count'            => $item_count,
                 'count-cumulative' => $item_count + ($children ? $children->sum('count-cumulative') : 0),
             ]);
