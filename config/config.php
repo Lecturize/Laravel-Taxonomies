@@ -30,7 +30,6 @@ return [
 
         'pivot' => [
             'table' => 'taxables',
-            'model' => \Lecturize\Taxonomies\Models\Taxable::class,
         ],
 
         /*

@@ -17,39 +17,6 @@ class AddPrimaryKeyToTaxablesTable extends Migration
     public function up(): void
     {
         Schema::table($this->pivot, function(Blueprint $table) {
-            $table->id()->first();
-        });
-
-        $taxables = app(config('lecturize.taxonomies.pivot.model', Taxable::class))::all();
-
-        $unique_grouped = $taxables->groupBy(function (Taxable $item) {
-            return implode('_', [
-                $item->taxonomy_id,
-                $item->taxable_type,
-                $item->taxable_id,
-            ]);
-        });
-
-        $total   = $taxables->count();
-        $unique  = $unique_grouped->count();
-        $deleted = 0;
-
-        foreach ($unique_grouped as $items) {
-            $slice = $items->slice(1);
-
-            foreach ($slice as $item) {
-                $item->delete();
-                $deleted++;
-            }
-        }
-
-        info("Deleted $deleted duplicates out of $total taxables, $unique unique taxables where found.");
-
-        Schema::table($this->pivot, function(Blueprint $table) {
-            $table->dropColumn('id');
-        });
-
-        Schema::table($this->pivot, function(Blueprint $table) {
             $table->primary(['taxonomy_id', 'taxable_type', 'taxable_id']);
         });
     }
