@@ -12,7 +12,7 @@ Require the package from your `composer.json` file
 
 ```php
 "require": {
-    "lecturize/laravel-taxonomies": "^1.1"
+    "lecturize/laravel-taxonomies": "^1.2"
 }
 ```
 
@@ -106,6 +106,32 @@ $model = Model::categorized('My Category', 'blog_category')->get();
 
 I've included a set of helper functions for your convenience, see `src/helpers.php`.
 
+## Custom taxonomy model
+
+Make sure to create a custom `Taxonomy` model, that extends `Lecturize\Taxonomies\Models\Taxonomy`.
+
+```php
+<?php
+
+namespace App\Models;
+
+use App\Models\Post;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Lecturize\Taxonomies\Models\Taxonomy as TaxonomyBase;
+
+class Taxonomy extends TaxonomyBase
+{
+    public function posts(): MorphToMany
+    {
+        return $this->morphedByMany(Post::class, 'taxable', 'taxables')
+                    ->withTimestamps();
+    }
+}
+```
+
+Don't forget to publish the config file and update the value of `lecturize.taxonomies.taxonomies.model` to `\App\Models\Post:class`.
+
 ## Example
 
 **Add categories to an Eloquent model**
@@ -117,7 +143,7 @@ $post->addCategory('My First Category', 'blog_category');
 $post->addCategories(['Category Two', 'Category Three'], 'blog_category');
 ```
 
-First of all, this snippet will create three entries in your `terms` table, if they don't already exist:
+First, this snippet will create three entries in your `terms` table, if they don't already exist:
 
 * My First Category
 * Category Two
@@ -137,8 +163,21 @@ So I wanted to keep my *Terms* unique throughout my app, which is why I separate
 
 ## Changelog
 
-- [2021-02-09] **v1.0** Extended the database tables to support UUIDs (be sure to generate some on your existing models) and better customization. Quite some breaking changes throughout the whole package.
-- [2022-05-16] **v1.1** Updated dependencies to PHP 8 and Laravel 8/9 - for older versions please refer to v1.0. Added new columns like `content`, `lead`, `meta_desc`, `visible` and `searchable` to taxonomies table. Renamed the `term` scope on the `Taxonomy` model to `byTerm` to avoid confusion with its `term` relationship method.
+### [2021-02-09] **v1.0**
+
+Extended the database tables to support UUIDs (be sure to generate some on your existing models) and better customization. Quite some breaking changes throughout the whole package.
+
+### [2022-05-16] **v1.1**
+
+Updated dependencies to PHP 8 and Laravel 8/9 - for older versions please refer to v1.0. Added new columns like `content`, `lead`, `meta_desc`, `visible` and `searchable` to taxonomies table. Renamed the `term` scope on the `Taxonomy` model to `byTerm` to avoid confusion with its `term` relationship method.
+
+### [2022-06-04] **v1.2**
+
+Removed the `Taxable` model, you should create a custom `Taxonomy` model in your project that extends `Lecturize\Taxonomies\Models\Taxonomy` and contain your project-specific **morphedByMany** relations, e.g. `posts`. Don't forget to override the config value of `config('lecturize.taxonomies.taxonomies.model')` accordingly.
+
+On the `taxable` pivot table a primary key has been added, make sure you have no duplicates in that table **before** publishing and running the new migrations! Also, timestamps have been added to the pivot table.
+
+If you are using the `get_categories_collection()` or `build_categories_collection_from_tree()` helper function or `Taxonomy::getTree()` review the slightly adapted signatures. Instead of a taxables class (e.g. `\Post:class`) through the `$taxable` argument, we now ask for a `$taxable_relation` (e.g. the `posts` relation on your custom taxonomy model). If you continue to pass a class name like `\Post:class` we'll try and guess the relation by using `Str::plural()`. 
 
 ## License
 
