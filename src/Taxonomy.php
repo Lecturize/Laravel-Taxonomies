@@ -67,14 +67,14 @@ class Taxonomy
     /**
      * Get the category tree for given taxonomy.
      *
-     * @param  string|array  $taxonomy          Either the taxonomy, a taxonomy array or a taxonomy prefix suffixed with % (percent).
-     * @param  string        $taxable_class
+     * @param  string|array  $taxonomy                    Either the taxonomy, a taxonomy array or a taxonomy prefix suffixed with % (percent).
+     * @param  string        $taxable_relation_attribute  A relationship method on a custom Taxonomy model, if a class is given we'll try to guess a relationship method of it.
      * @param  string        $taxable_callback
      * @param  bool          $cached
      * @return Collection
      * @throws Exception
      */
-    public static function getTree(string|array $taxonomy, string $taxable_class = '', string $taxable_callback = '', bool $cached = true): Collection
+    public static function getTree(string|array $taxonomy, string $taxable_relation_attribute = '', string $taxable_callback = '', bool $cached = true): Collection
     {
         $prefix = null;
 
@@ -96,13 +96,13 @@ class Taxonomy
             throw new Exception('The first method argument must be either a string or an array.');
         }
 
-        $key.= $taxable_class ? '.'. Str::slug($taxable_class) : '';
+        $key.= $taxable_relation_attribute ? '.'. Str::slug($taxable_relation_attribute) : '';
         $key.= $taxable_callback ? '.filter-'. Str::slug($taxable_callback) : '';
 
         if (! $cached)
             cache()->forget($key);
 
-        return maybe_tagged_cache(['taxonomies', 'taxonomies:tree'])->remember($key, config('lecturize.taxonomies.cache-expiry', now()->addWeek()), function() use($taxonomy, $prefix, $taxable_class, $taxable_callback) {
+        return maybe_tagged_cache(['taxonomies', 'taxonomies:tree'])->remember($key, config('lecturize.taxonomies.cache-expiry', now()->addWeek()), function() use($taxonomy, $prefix, $taxable_relation_attribute, $taxable_callback) {
             if ($prefix) {
                 $taxonomies = TaxonomyModel::with('parent', 'children')
                                            ->taxonomyStartsWith($prefix)
@@ -119,7 +119,7 @@ class Taxonomy
                                            ->get();
             }
 
-            return self::buildTree($taxonomies, $taxable_class, $taxable_callback);
+            return self::buildTree($taxonomies, $taxable_relation_attribute, $taxable_callback);
         });
     }
 
