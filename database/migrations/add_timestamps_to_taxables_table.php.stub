@@ -1,0 +1,30 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use Lecturize\Taxonomies\Models\Taxable;
+
+class AddTimestampsToTaxablesTable extends Migration
+{
+    protected string $pivot;
+
+    public function __construct()
+    {
+        $this->pivot = config('lecturize.taxonomies.pivot.table', config('lecturize.taxonomies.pivot_table', 'taxables'));
+    }
+
+    public function up(): void
+    {
+        Schema::table($this->pivot, function(Blueprint $table) {
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table($this->pivot, function(Blueprint $table) {
+            $table->dropTimestamps();
+        });
+    }
+}
