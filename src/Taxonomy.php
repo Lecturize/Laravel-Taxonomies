@@ -19,7 +19,7 @@ class Taxonomy
      *
      * @var Application
      */
-    protected $app;
+    protected Application $app;
 
     /**
      * Create a new Cache manager instance.
@@ -41,7 +41,7 @@ class Taxonomy
      * @param  int|null            $sort
      * @return Collection
      */
-    public static function createCategories($categories, string $taxonomy, ?TaxonomyModel $parent = null, ?int $sort = null): ?Collection
+    public static function createCategories(string|array $categories, string $taxonomy, ?TaxonomyModel $parent = null, ?int $sort = null): Collection
     {
         if (is_string($categories))
             $categories = explode('|', $categories);

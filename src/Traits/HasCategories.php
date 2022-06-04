@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
@@ -14,6 +15,9 @@ use Lecturize\Taxonomies\Models\Term;
  * @package Lecturize\Taxonomies\Traits
  * @property EloquentCollection|Taxonomy[]  $taxonomies
  * @property EloquentCollection|Taxable[]   $taxable
+ *
+ * @method static Builder withinTaxonomy(Taxonomy|int|null $taxonomy)
+ * @method static Builder withinTaxonomies(Collection|array|null $taxonomies)
  */
 trait HasCategories
 {
@@ -22,6 +26,7 @@ trait HasCategories
      */
     public function taxonomies(): MorphToMany
     {
+        /** @var Model $this */
         return $this->morphToMany(
             config('lecturize.taxonomies.taxonomies.model', Taxonomy::class),
             'taxable'
@@ -33,6 +38,7 @@ trait HasCategories
      */
     public function taxable(): MorphMany
     {
+        /** @var Model $this */
         return $this->morphMany(
             config('lecturize.taxonomies.pivot.model', Taxable::class),
             'taxable'
@@ -69,7 +75,7 @@ trait HasCategories
     /**
      * Convenience method to set categories.
      */
-    public function setCategories(string $categories, string $taxonomy): void
+    public function setCategories(string|array $categories, string $taxonomy): void
     {
         $this->detachCategories();
         $this->addCategories($categories, $taxonomy);
@@ -77,10 +83,8 @@ trait HasCategories
 
     /**
      * Add one or multiple terms (categories) within a given taxonomy.
-     *
-     * @param  string|array  $categories
      */
-    public function addCategories($categories, string $taxonomy, ?Taxonomy $parent = null): self
+    public function addCategories(string|array $categories, string $taxonomy, ?Taxonomy $parent = null): self
     {
         $taxonomies = \Lecturize\Taxonomies\Facades\Taxonomy::createCategories($categories, $taxonomy, $parent);
 
@@ -93,10 +97,8 @@ trait HasCategories
 
     /**
      * Convenience method to add category to this model.
-     *
-     * @param  string|array  $categories
      */
-    public function addCategory($categories, string $taxonomy, ?Taxonomy $parent = null): self
+    public function addCategory(string|array $categories, string $taxonomy, ?Taxonomy $parent = null): self
     {
         return $this->addCategories($categories, $taxonomy, $parent);
     }
@@ -104,10 +106,8 @@ trait HasCategories
     /**
      * Add one or multiple terms in a given taxonomy.
      * @deprecated Use addCategory() or addCategories() instead.
-     *
-     * @param  string|array  $categories
      */
-    public function addTerm($categories, string $taxonomy, ?Taxonomy $parent = null): self
+    public function addTerm(string|array $categories, string $taxonomy, ?Taxonomy $parent = null): self
     {
         return $this->addCategory($categories, $taxonomy, $parent);
     }
@@ -271,7 +271,7 @@ trait HasCategories
      * Scope that have been categorized in given terms (category titles) and taxonomy.
      * @param  array|string  $categories
      */
-    public function scopeCategorizedIn(Builder $query, $categories, string $taxonomy): Builder
+    public function scopeCategorizedIn(Builder $query, string|array $categories, string $taxonomy): Builder
     {
         if (is_string($categories))
             $categories = explode('|', $categories);
@@ -283,10 +283,13 @@ trait HasCategories
     }
 
     /**
-     * Scope by the taxonomy id.
-     * @param  Taxonomy|int  $taxonomy
+     * Scope by given taxonomy.
+     *
+     * @param  Builder            $query
+     * @param  Taxonomy|int|null  $taxonomy
+     * @return Builder
      */
-    public function scopeWithinTaxonomy(Builder $query, $taxonomy): Builder
+    public function scopeWithinTaxonomy(Builder $query, Taxonomy|int|null $taxonomy): Builder
     {
         if ($taxonomy instanceof Taxonomy) {
             $taxonomy_id = $taxonomy->id;
@@ -302,20 +305,26 @@ trait HasCategories
     }
 
     /**
-     * Scope by category id.
+     * Scope by given taxonomy.
      * @deprecated This seemed confusing, use scopeWithinTaxonomy() instead.
-     * @param  Taxonomy|int  $taxonomy
+     *
+     * @param  Builder            $query
+     * @param  Taxonomy|int|null  $taxonomy
+     * @return Builder
      */
-    public function scopeHasCategory(Builder $query, $taxonomy): Builder
+    public function scopeHasCategory(Builder $query, Taxonomy|int|null $taxonomy): Builder
     {
         return $this->scopeWithinTaxonomy($query, $taxonomy);
     }
 
     /**
-     * Scope by category ids.
-     * @param  Collection|Taxonomy[]|array  $taxonomies
+     * Scope by taxonomies.
+     *
+     * @param  Builder                           $query
+     * @param  Collection|Taxonomy[]|array|null  $taxonomies
+     * @return Builder
      */
-    public function scopeWithinTaxonomies(Builder $query, $taxonomies): Builder
+    public function scopeWithinTaxonomies(Builder $query, Collection|array|null $taxonomies): Builder
     {
         if ($taxonomies instanceof Collection) {
             $taxonomy_ids = $taxonomies->pluck('id')->toArray();
@@ -331,11 +340,14 @@ trait HasCategories
     }
 
     /**
-     * Scope by category ids.
+     * Scope by taxonomies.
      * @deprecated This seemed confusing, use scopeHasTaxonomies() instead.
-     * @param  Collection|Taxonomy[]|array  $taxonomies
+     *
+     * @param  Builder                           $query
+     * @param  Collection|Taxonomy[]|array|null  $taxonomies
+     * @return Builder
      */
-    public function scopeHasCategories(Builder $query, $taxonomies): Builder
+    public function scopeHasCategories(Builder $query, Collection|array|null $taxonomies): Builder
     {
         return $this->scopeWithinTaxonomies($query, $taxonomies);
     }
