@@ -7,16 +7,21 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 /**
  * Class Taxable
  * @package Lecturize\Taxonomies\Models
- * @property Model      $taxable
- * @property Taxonomy   $taxonomy
+ * @todo Refactor this into a Pivot Model.
+ * @property int       $taxonomy_id
+ * @property Taxonomy  $taxonomy
+ * @property string    $taxable_type
+ * @property int       $taxable_id
+ * @property Model     $taxable
  */
 class Taxable extends Model
 {
     /** @inheritdoc */
     protected $fillable = [
         'taxonomy_id',
-        'taxable_id',
+
         'taxable_type',
+        'taxable_id',
     ];
 
     /** @inheritdoc */
