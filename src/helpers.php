@@ -18,7 +18,8 @@ use Lecturize\Taxonomies\Taxonomy;
  * @return Collection
  * @throws Exception
  */
-function get_categories_collection(string|array $taxonomy = 'category', string $route = '', string $taxable = '', string $taxable_callback = '', bool $include_empty = false): Collection {
+function get_categories_collection(string|array $taxonomy = 'category', string $route = '', string $taxable = '', string $taxable_callback = '', bool $include_empty = false): Collection
+{
     $tree = Taxonomy::getTree($taxonomy, $taxable, $taxable_callback);
 
     return build_categories_collection_from_tree($tree, $taxonomy, $route, $taxable, $include_empty);
@@ -37,7 +38,8 @@ function get_categories_collection(string|array $taxonomy = 'category', string $
  * @param  bool          $is_child
  * @return Collection
  */
-function build_categories_collection_from_tree(Collection $tree, string|array $taxonomy, string $route, string $taxable, bool $include_empty = false, array $params = [], array $attributes = [], bool $is_child = false): Collection {
+function build_categories_collection_from_tree(Collection $tree, string|array $taxonomy, string $route, string $taxable, bool $include_empty = false, array $params = [], array $attributes = [], bool $is_child = false): Collection
+{
     $temp  = $params;
     $items = collect();
 
@@ -100,7 +102,8 @@ function build_categories_collection_from_tree(Collection $tree, string|array $t
  * @param  string  $route
  * @return array
  */
-function get_categories_for_model(Model $model, string $taxonomy = 'category', string $route = 'taxonomy.show'): array {
+function get_categories_for_model(Model $model, string $taxonomy = 'category', string $route = 'taxonomy.show'): array
+{
     if (! method_exists($model, 'taxonomies'))
         return [];
 
@@ -124,12 +127,13 @@ function get_categories_for_model(Model $model, string $taxonomy = 'category', s
 /**
  * Get category options for a select box.
  *
- * @param  array   $categories
- * @param  string  $selected_slug
- * @param  int     $level
+ * @param  Collection|array  $categories
+ * @param  string            $selected_slug
+ * @param  int               $level
  * @return string
  */
-function get_category_options(array $categories, string $selected_slug = '', int $level = 0): string {
+function get_category_options(Collection|array $categories, string $selected_slug = '', int $level = 0): string
+{
     $category_items = [];
 
     foreach ($categories as $item) {
@@ -162,7 +166,8 @@ function get_category_options(array $categories, string $selected_slug = '', int
  * @param  array   $params
  * @return string
  */
-function get_term_link(string $route = 'taxonomy.show', array $params = []): string {
+function get_term_link(string $route = 'taxonomy.show', array $params = []): string
+{
     return $route ? route($route, $params) : '#';
 }
 
@@ -174,7 +179,8 @@ if (! function_exists('taxonomies_is_active_route')) :
      * @param  array   $params
      * @return bool
      */
-    function taxonomies_is_active_route(string $route = '', array $params = []): bool {
+    function taxonomies_is_active_route(string $route = '', array $params = []): bool
+    {
         if (is_array($params) && count($params) > 0) {
             $route = route($route, $params, false);
             $path  = '/'. request()->decodedPath();
