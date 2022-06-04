@@ -34,18 +34,6 @@ trait HasCategories
     }
 
     /**
-     * Return a collection of taxonomies related to the taxed model.
-     */
-    public function taxable(): MorphMany
-    {
-        /** @var Model $this */
-        return $this->morphMany(
-            config('lecturize.taxonomies.pivot.model', Taxable::class),
-            'taxable'
-        );
-    }
-
-    /**
      * Convenience method to sync categories.
      */
     public function syncCategories(string $terms, string $taxonomy): void
