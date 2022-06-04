@@ -1,11 +1,13 @@
 <?php namespace Lecturize\Taxonomies\Contracts;
 
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+
 /**
  * Interface CanHaveCategories
  * @package Lecturize\Taxonomies\Contracts
  */
 interface CanHaveCategories
 {
-    /** @return mixed */
-    public function taxonomies();
+    /** @return MorphToMany */
+    public function taxonomies(): MorphToMany;
 }

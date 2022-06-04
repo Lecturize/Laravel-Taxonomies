@@ -13,7 +13,7 @@ trait ModelFinder
      * Find term by slug.
      *
      * @param  string  $slug
-     * @return Term
+     * @return Term|null
      */
     public function findTerm(string $slug): ?Term
     {
@@ -26,9 +26,9 @@ trait ModelFinder
      * @param  string|int  $term
      * @param  string      $taxonomy
      * @param  string      $term_field
-     * @return Taxonomy
+     * @return Taxonomy|null
      */
-    public function findTaxonomyByTerm($term, string $taxonomy, string $term_field = 'id'): ?Taxonomy
+    public function findTaxonomyByTerm(string|int $term, string $taxonomy, string $term_field = 'id'): ?Taxonomy
     {
         return $this->findCategory($term, $taxonomy, $term_field);
     }
@@ -39,9 +39,9 @@ trait ModelFinder
      * @param  string|int  $term
      * @param  string      $taxonomy
      * @param  string      $term_field
-     * @return Taxonomy
+     * @return Taxonomy|null
      */
-    public function findCategory($term, string $taxonomy, string $term_field = 'title'): ?Taxonomy
+    public function findCategory(string|int $term, string $taxonomy, string $term_field = 'title'): ?Taxonomy
     {
         return Taxonomy::taxonomy($taxonomy)
                        ->byTerm($term, $term_field)

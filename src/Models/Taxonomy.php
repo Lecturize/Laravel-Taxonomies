@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
+use Webpatser\Uuid\Uuid;
 
 /**
  * Class Taxonomy
@@ -97,7 +98,7 @@ class Taxonomy extends Model
             if ($model->getConnection()
                       ->getSchemaBuilder()
                       ->hasColumn($model->getTable(), 'uuid'))
-                $model->uuid = \Webpatser\Uuid\Uuid::generate()->string;
+                $model->uuid = Uuid::generate()->string;
         });
 
         static::saving(function ($model) {
@@ -112,7 +113,7 @@ class Taxonomy extends Model
     }
 
     /**
-     * Get the term, that will be displayed as this taxonomies (categories) title.
+     * Get the term, that will be displayed as these taxonomies (categories) title.
      *
      * @return BelongsTo
      */

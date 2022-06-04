@@ -3,10 +3,8 @@
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
-use Lecturize\Taxonomies\Models\Taxable;
 use Lecturize\Taxonomies\Models\Taxonomy;
 use Lecturize\Taxonomies\Models\Term;
 
@@ -14,7 +12,6 @@ use Lecturize\Taxonomies\Models\Term;
  * Class HasCategories
  * @package Lecturize\Taxonomies\Traits
  * @property EloquentCollection|Taxonomy[]  $taxonomies
- * @property EloquentCollection|Taxable[]   $taxable
  *
  * @method static Builder withinTaxonomy(Taxonomy|int|null $taxonomy)
  * @method static Builder withinTaxonomies(Collection|array|null $taxonomies)
@@ -257,7 +254,6 @@ trait HasCategories
 
     /**
      * Scope that have been categorized in given terms (category titles) and taxonomy.
-     * @param  array|string  $categories
      */
     public function scopeCategorizedIn(Builder $query, string|array $categories, string $taxonomy): Builder
     {

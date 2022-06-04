@@ -175,7 +175,7 @@ class Taxonomy
                                         if ($taxable_callback && ($taxable = $item->taxable) && method_exists($taxable, $taxable_callback)) {
                                             try {
                                                 return $taxable->{$taxable_callback}();
-                                            } catch (Exception $e) {}
+                                            } catch (Exception) {}
                                         }
 
                                         return true;

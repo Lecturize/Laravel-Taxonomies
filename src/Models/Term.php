@@ -60,30 +60,6 @@ class Term extends Model
     }
 
     /**
-     * Fallback attribute for the old column "name".
-     * @deprecated Use the title property instead.
-     *
-     * @return string
-     */
-    public function getNameAttribute(): string
-    {
-        return $this->title;
-    }
-
-    /**
-     * Fallback method for the old column "name".
-     * @deprecated Use getDisplayTitle($limit) instead.
-     *
-     * @param  string  $locale
-     * @param  int     $limit
-     * @return string
-     */
-    public function getDisplayName(string $locale = '', int $limit = 0): string
-    {
-        return $this->getDisplayTitle($limit);
-    }
-
-    /**
      * Get display title.
      *
      * @param  int  $limit

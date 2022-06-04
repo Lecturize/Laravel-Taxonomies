@@ -44,7 +44,7 @@ function build_categories_collection_from_tree(Collection $tree, string|array $t
     $items = collect();
 
     $count = 1;
-    foreach ($tree as $slug => $properties) {
+    foreach ($tree as $properties) {
         $params[] = $properties['slug'];
 
         $children = null;
@@ -215,7 +215,7 @@ if (! function_exists('maybe_tagged_cache')) :
     {
         try {
             return Cache::tags($names);
-        } catch (Exception $e) {
+        } catch (Exception) {
             return cache();
         }
     }
