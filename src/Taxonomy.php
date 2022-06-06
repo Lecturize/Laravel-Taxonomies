@@ -65,14 +65,13 @@ class Taxonomy
     }
 
     /**
-     * Get the category tree for given taxonomy.
+     * Get the category tree for the given taxonomy.
      *
      * @param  string|array  $taxonomy          Either the taxonomy, a taxonomy array or a taxonomy prefix suffixed with % (percent).
      * @param  string        $taxable_relation  A relationship method on a custom Taxonomy model, if a class is given we'll try to guess a relationship method of it.
      * @param  string        $taxable_callback
      * @param  bool          $cached
      * @return Collection
-     * @throws Exception
      */
     public static function getTree(string|array $taxonomy, string $taxable_relation = '', string $taxable_callback = '', bool $cached = true): Collection
     {
@@ -84,16 +83,13 @@ class Taxonomy
 
             $key = "taxonomies.$taxonomies.tree";
 
-        } elseif (is_string($taxonomy) && str_ends_with($taxonomy, '%')) {
+        } elseif (str_ends_with($taxonomy, '%')) {
             $prefix = str_replace('%', '', $taxonomy);
 
             $key = "taxonomies.prefixed-$prefix.tree";
 
-        } elseif (is_string($taxonomy)) {
-            $key = "taxonomies.$taxonomy.tree";
-
         } else {
-            throw new Exception('The first method argument must be either a string or an array.');
+            $key = "taxonomies.$taxonomy.tree";
         }
 
         $key.= $taxable_relation ? '.'. Str::slug($taxable_relation) : '';
@@ -126,14 +122,13 @@ class Taxonomy
     }
 
     /**
-     * Get category tree item.
+     * Start a new category tree branch.
      *
      * @param  Collection  $taxonomies
      * @param  string      $taxable_relation
      * @param  string      $taxable_callback
      * @param  boolean     $is_child
      * @return Collection
-     * @throws Exception
      */
     public static function buildTree(Collection $taxonomies, string $taxable_relation = '', string $taxable_callback = '', bool $is_child = false): Collection
     {
@@ -152,6 +147,7 @@ class Taxonomy
             $taxonomies->load($relation);
         }
 
+        /** @var \Lecturize\Taxonomies\Models\Taxonomy $taxonomy */
         foreach ($taxonomies->sortBy('sort') as $taxonomy) {
             if (! $is_child && ! is_null($taxonomy->parent_id))
                 continue;

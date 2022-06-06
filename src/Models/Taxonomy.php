@@ -1,6 +1,5 @@
 <?php namespace Lecturize\Taxonomies\Models;
 
-use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +13,7 @@ use Webpatser\Uuid\Uuid;
  * Class Taxonomy
  * @package Lecturize\Taxonomies\Models
  * @property int                            $id
+ * @property string                         $uuid
  * @property string|null                    $parent_id
  * @property Taxonomy|null                  $parent
  * @property EloquentCollection|Taxonomy[]  $children
@@ -94,14 +94,14 @@ class Taxonomy extends Model
     {
         parent::boot();
 
-        static::creating(function ($model) {
+        static::creating(function (Taxonomy $model) {
             if ($model->getConnection()
                       ->getSchemaBuilder()
                       ->hasColumn($model->getTable(), 'uuid'))
                 $model->uuid = Uuid::generate()->string;
         });
 
-        static::saving(function ($model) {
+        static::saving(function (Taxonomy $model) {
             if (isset($model->term) && $model->term->title && ! $model->description)
                 $model->description = $model->term->title;
 
@@ -170,7 +170,6 @@ class Taxonomy extends Model
      *
      * @param  bool  $exclude_self
      * @return Collection
-     * @throws Exception
      */
     public function getBreadcrumbs(bool $exclude_self = true): Collection
     {
@@ -192,7 +191,6 @@ class Taxonomy extends Model
      *
      * @param  Collection|null  $parameters
      * @return Collection
-     * @throws Exception
      */
     function getParentBreadcrumbs(?Collection $parameters = null): Collection
     {
@@ -216,7 +214,6 @@ class Taxonomy extends Model
      *
      * @param  bool  $exclude_taxonomy
      * @return array
-     * @throws Exception
      */
     public function getRouteParameters(bool $exclude_taxonomy = true): array
     {
