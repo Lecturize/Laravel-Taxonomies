@@ -1,4 +1,6 @@
-<?php namespace Lecturize\Taxonomies\Contracts;
+<?php
+
+namespace Lecturize\Taxonomies\Contracts;
 
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 

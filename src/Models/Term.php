@@ -1,4 +1,6 @@
-<?php namespace Lecturize\Taxonomies\Models;
+<?php
+
+namespace Lecturize\Taxonomies\Models;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;

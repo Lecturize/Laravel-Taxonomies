@@ -1,4 +1,6 @@
-<?php namespace Lecturize\Taxonomies\Tests;
+<?php
+
+namespace Lecturize\Taxonomies\Tests;
 
 class DemoTest extends TestCase
 {

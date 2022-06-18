@@ -1,4 +1,6 @@
-<?php namespace Lecturize\Taxonomies\Traits;
+<?php
+
+namespace Lecturize\Taxonomies\Traits;
 
 /**
  * Class ModelGetter

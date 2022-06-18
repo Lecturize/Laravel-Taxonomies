@@ -1,4 +1,6 @@
-<?php namespace Lecturize\Taxonomies\Facades;
+<?php
+
+namespace Lecturize\Taxonomies\Facades;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Facade;

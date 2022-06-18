@@ -1,4 +1,6 @@
-<?php namespace Lecturize\Taxonomies\Traits;
+<?php
+
+namespace Lecturize\Taxonomies\Traits;
 
 use Lecturize\Taxonomies\Models\Taxonomy;
 use Lecturize\Taxonomies\Models\Term;

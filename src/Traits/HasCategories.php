@@ -1,4 +1,6 @@
-<?php namespace Lecturize\Taxonomies\Traits;
+<?php
+
+namespace Lecturize\Taxonomies\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;

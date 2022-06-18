@@ -1,4 +1,6 @@
-<?php namespace Lecturize\Taxonomies;
+<?php
+
+namespace Lecturize\Taxonomies;
 
 use Illuminate\Support\ServiceProvider;
 
