@@ -12,7 +12,7 @@ class TaxonomiesServiceProvider extends ServiceProvider
         'AddVisibilityToTaxonomiesTable' => 'add_visibility_to_taxonomies_table',
         'AddMetaDescToTaxonomiesTable'   => 'add_meta_desc_to_taxonomies_table',
         'AddPrimaryKeyToTaxablesTable'   => 'add_primary_key_to_taxables_table',
-        'AddTimestampsToTaxablesTable'   => 'AddTimestampsToTaxablesTable',
+        'AddTimestampsToTaxablesTable'   => 'add_timestamps_to_taxables_table',
     ];
 
      public function boot()
