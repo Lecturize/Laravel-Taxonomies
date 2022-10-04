@@ -86,7 +86,7 @@ $model->hasCategory('My Category', 'blog_category')
 
 ##### Remove a Term from model by (optional) taxonomy
 ```php
-$model->removeCategory('My Category', 'blog_category')
+$model->detachCategory('My Category', 'blog_category')
 ```
 
 ##### Remove (detach) all categories relations from model
