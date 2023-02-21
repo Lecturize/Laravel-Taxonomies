@@ -71,11 +71,8 @@ class Taxonomy extends Model
         'visible'    => 'boolean',
         'searchable' => 'boolean',
         'properties' => 'array',
-    ];
 
-    /** @inheritdoc */
-    protected $dates = [
-        'deleted_at',
+        'deleted_at' => 'datetime',
     ];
 
     /** @inheritdoc */

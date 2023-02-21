@@ -34,8 +34,8 @@ class Term extends Model
     ];
 
     /** @inheritdoc */
-    protected $dates = [
-        'deleted_at',
+    protected $casts = [
+        'deleted_at' => 'datetime',
     ];
 
     /** @inheritdoc */
